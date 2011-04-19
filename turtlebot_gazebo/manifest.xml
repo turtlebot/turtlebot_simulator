@@ -1,0 +1,14 @@
+<package>
+  <description brief="turtlebot_gazebo">
+
+     turtlebot_gazebo
+
+  </description>
+  <author>Nate Koenig</author>
+  <license>BSD</license>
+  <review status="unreviewed" notes=""/>
+  <url>http://ros.org/wiki/turtlebot_gazebo</url>
+
+</package>
+
+

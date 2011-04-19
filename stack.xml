@@ -1,0 +1,8 @@
+<stack>
+  <description brief="turtlebot_simulator">Turtlebot specific simulation components.</description>
+  <author>Maintained by Nate Koenig</author>
+  <license>BSD</license>  
+  <review status="unreviewed" notes=""/>
+  <url>http://ros.org/wiki/turtlebot_simulator</url>
+  <depend stack="ros" />
+</stack>
