@@ -5,6 +5,11 @@
 #include <gazebo/Model.hh>
 #include <gazebo/Time.hh>
 
+#include <nav_msgs/Odometry.h>
+#include <geometry_msgs/TwistWithCovariance.h>
+#include <geometry_msgs/PoseWithCovariance.h>
+
+#include <tf/transform_broadcaster.h>
 #include <ros/ros.h>
 
 namespace gazebo
@@ -30,12 +35,15 @@ namespace gazebo
   
       ros::Publisher sensor_state_pub_;
       ros::Publisher odom_pub_;
+      ros::Publisher joint_state_pub_;
   
       ros::Subscriber cmd_vel_sub_;
 
       ParamT<std::string> *node_namespaceP_;
       ParamT<std::string> *left_wheel_joint_nameP_;
       ParamT<std::string> *right_wheel_joint_nameP_;
+      ParamT<std::string> *front_castor_joint_nameP_;
+      ParamT<std::string> *rear_castor_joint_nameP_;
       /// Separation between the wheels
       ParamT<float> *wheel_sepP_;
 
@@ -56,7 +64,10 @@ namespace gazebo
       float odom_pose_[3];
       float odom_vel_[3];
 
-      Joint *joints_[2];
+      Joint *joints_[4];
+
+      tf::TransformBroadcaster transform_broadcaster_;
+      sensor_msgs::JointState js_;
   };
 }
 #endif

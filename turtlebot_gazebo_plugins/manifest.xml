@@ -1,5 +1,5 @@
 <package>
-  <description brief="turtlebot_plugins">
+  <description brief="turtlebot_gazebo_plugins">
 
      turtlebot_plugins
 
@@ -7,10 +7,11 @@
   <author>Nate Koenig</author>
   <license>BSD</license>
   <review status="unreviewed" notes=""/>
-  <url>http://ros.org/wiki/turtlebot_plugins</url>
+  <url>http://ros.org/wiki/turtlebot_gazebo_plugins</url>
   <depend package="gazebo"/>
   <depend package="nav_msgs"/>
   <depend package="geometry_msgs"/>
+  <depend package="sensor_msgs"/>
   <depend package="turtlebot_node"/>
 
   <export>
