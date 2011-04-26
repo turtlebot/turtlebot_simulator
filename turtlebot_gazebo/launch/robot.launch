@@ -9,14 +9,14 @@
   </node>
 
   
-  <node pkg="robot_state_publisher" type="state_publisher" name="robot_state_publisher" output="screen" ns="turtlebot_node">
+  <node pkg="robot_state_publisher" type="state_publisher" name="robot_state_publisher" output="screen">
     <param name="publish_frequency" type="double" value="30.0" />
-    <param name="tf_prefix" value="turtlebot_node" />
+    <!--<param name="tf_prefix" value="turtlebot_node" />-->
   </node>
 
   <!-- The odometry estimator -->
-   <node pkg="robot_pose_ekf" type="robot_pose_ekf" name="robot_pose_ekf" ns="turtlebot_node">
-    <param name="tf_prefix" value="turtlebot_node" />
+   <node pkg="robot_pose_ekf" type="robot_pose_ekf" name="robot_pose_ekf">
+    <!--<param name="tf_prefix" value="turtlebot_node" />-->
     <param name="freq" value="10.0"/>
     <param name="sensor_timeout" value="1.0"/>
     <param name="publish_tf" value="true"/>

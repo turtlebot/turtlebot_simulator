@@ -106,9 +106,9 @@ void GazeboRosCreate::LoadChild( XMLConfigNode *node )
   cmd_vel_sub_ = rosnode_->subscribe("cmd_vel", 1, &GazeboRosCreate::OnCmdVel, this );
 
   sensor_state_pub_ = rosnode_->advertise<turtlebot_node::TurtlebotSensorState>("sensor_state", 1);
-  odom_pub_ = rosnode_->advertise<nav_msgs::Odometry>("odom", 1);
+  odom_pub_ = rosnode_->advertise<nav_msgs::Odometry>("/odom", 1);
 
-  joint_state_pub_ = rosnode_->advertise<sensor_msgs::JointState>("joint_states", 1);
+  joint_state_pub_ = rosnode_->advertise<sensor_msgs::JointState>("/joint_states", 1);
 
   js_.name.push_back( **left_wheel_joint_nameP_ );
   js_.position.push_back(0);
@@ -161,7 +161,7 @@ void GazeboRosCreate::UpdateChild()
   d2 = step_time.Double() * (wd / 2) * joints_[RIGHT]->GetVelocity(0);
 
   dr = (d1 + d2) / 2;
-  da = (d1 - d2) / ws;
+  da = (d2 - d1) / ws;
 
   // Compute odometric pose
   odom_pose_[0] += dr * cos( odom_pose_[2] );
@@ -179,27 +179,21 @@ void GazeboRosCreate::UpdateChild()
   joints_[LEFT]->SetMaxForce( 0, **(torqueP_) );
   joints_[RIGHT]->SetMaxForce( 0, **(torqueP_) );
 
-
-  /*btQuaternion qt;
-  //qt.setRPY(this->posIface->data->pose.roll, this->posIface->data->pose.pitch, this->posIface->data->pose.yaw);
-  qt.setRPY(0,0,0);
-  btVector3 vt(odom_pose_[0], odom_pose_[1], odom_pose_[2]);
-  tf::Transform base_link_to_odom(qt, vt);
- transform_broadcaster_.sendTransform( tf::StampedTransform( base_link_to_odom, ros::Time::now(), "/turtlebot_node/odom", "turtlebot_node/base_footprint"));
- */
-
   nav_msgs::Odometry odom;
   odom.header.stamp = ros::Time::now();
-  odom.header.frame_id = "/turtlebot_node/odom";
-  odom.child_frame_id = "/turtlebot_node/base_footprint";
+  odom.header.frame_id = "odom";
+  odom.child_frame_id = "base_footprint";
   odom.pose.pose.position.x = odom_pose_[0];
   odom.pose.pose.position.y = odom_pose_[1];
   odom.pose.pose.position.z = 0;
 
-  odom.pose.pose.orientation.x = 0;
-  odom.pose.pose.orientation.y = 0;
-  odom.pose.pose.orientation.z = 0;
-  odom.pose.pose.orientation.w = 1;
+  btQuaternion qt;
+  qt.setRPY(0,0,odom_pose_[2]);
+
+  odom.pose.pose.orientation.x = qt.getX();
+  odom.pose.pose.orientation.y = qt.getY();
+  odom.pose.pose.orientation.z = qt.getZ();
+  odom.pose.pose.orientation.w = qt.getW();
 
   double pose_cov[36] = { 1e-3, 0, 0, 0, 0, 0,
                           0, 1e-3, 0, 0, 0, 0,
@@ -221,6 +215,7 @@ void GazeboRosCreate::UpdateChild()
 
   odom_pub_.publish( odom ); 
 
+  js_.header.stamp = ros::Time::now();
   js_.position[0] = joints_[LEFT]->GetAngle(0).GetAsRadian();
   js_.velocity[0] = joints_[LEFT]->GetVelocity(0);
 
