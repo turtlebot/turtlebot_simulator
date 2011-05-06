@@ -3,7 +3,9 @@
 
 #include <gazebo/Controller.hh>
 #include <gazebo/Model.hh>
+#include <gazebo/Geom.hh>
 #include <gazebo/Time.hh>
+#include <gazebo/RaySensor.hh>
 
 #include <nav_msgs/Odometry.h>
 #include <geometry_msgs/TwistWithCovariance.h>
@@ -27,6 +29,8 @@ namespace gazebo
   
     private:
 
+      void UpdateSensors();
+      void OnContact(const gazebo::Contact &contact);
       void OnCmdVel( const geometry_msgs::TwistConstPtr &msg);
 
       ros::NodeHandle *rosnode_;
@@ -44,6 +48,8 @@ namespace gazebo
       ParamT<std::string> *right_wheel_joint_nameP_;
       ParamT<std::string> *front_castor_joint_nameP_;
       ParamT<std::string> *rear_castor_joint_nameP_;
+      ParamT<std::string> *base_geom_nameP_;
+
       /// Separation between the wheels
       ParamT<float> *wheel_sepP_;
 
@@ -65,9 +71,18 @@ namespace gazebo
       float odom_vel_[3];
 
       Joint *joints_[4];
+      Geom *base_geom_;
+
+      RaySensor *left_cliff_sensor_;
+      RaySensor *leftfront_cliff_sensor_;
+      RaySensor *rightfront_cliff_sensor_;
+      RaySensor *right_cliff_sensor_;
+      RaySensor *wall_sensor_;
 
       tf::TransformBroadcaster transform_broadcaster_;
       sensor_msgs::JointState js_;
+
+      turtlebot_node::TurtlebotSensorState sensor_state_;
   };
 }
 #endif

@@ -6,6 +6,8 @@
 #include <turtlebot_plugins/gazebo_ros_create.h>
 
 #include <gazebo/Joint.hh>
+#include <gazebo/Body.hh>
+#include <gazebo/Geom.hh>
 #include <gazebo/Simulator.hh>
 #include <gazebo/Entity.hh>
 #include <gazebo/GazeboError.hh>
@@ -37,6 +39,7 @@ GazeboRosCreate::GazeboRosCreate( Entity *parent )
   right_wheel_joint_nameP_ = new ParamT<std::string>("right_wheel_joint","right_wheel_joint",1);
   front_castor_joint_nameP_ = new ParamT<std::string>("front_castor_joint","front_castor_joint",1);
   rear_castor_joint_nameP_ = new ParamT<std::string>("rear_castor_joint","rear_castor_joint",1);
+  base_geom_nameP_ = new ParamT<std::string>("base_geom","base_geom",1);
   wheel_sepP_ = new ParamT<float>("wheel_separation", 0.34,1);
   wheel_diamP_ = new ParamT<float>("wheel_diameter", 0.15,1);
   torqueP_ = new ParamT<float>("torque", 10.0, 1);
@@ -63,6 +66,7 @@ GazeboRosCreate::~GazeboRosCreate()
   delete right_wheel_joint_nameP_;
   delete front_castor_joint_nameP_;
   delete rear_castor_joint_nameP_;
+  delete base_geom_nameP_;
   delete rosnode_;
 }
     
@@ -75,12 +79,25 @@ void GazeboRosCreate::LoadChild( XMLConfigNode *node )
   rear_castor_joint_nameP_->Load(node);
   wheel_sepP_->Load(node);
   wheel_diamP_->Load(node);
+  base_geom_nameP_->Load(node);
   torqueP_->Load(node);
+
+  //TODO: fix this
+  base_geom_nameP_->SetValue("base_footprint_geom_base_link");
 
   joints_[LEFT] = my_parent_->GetJoint(**left_wheel_joint_nameP_);
   joints_[RIGHT] = my_parent_->GetJoint(**right_wheel_joint_nameP_);
   joints_[FRONT] = my_parent_->GetJoint(**front_castor_joint_nameP_);
   joints_[REAR] = my_parent_->GetJoint(**rear_castor_joint_nameP_);
+  base_geom_ = my_parent_->GetGeom(**base_geom_nameP_);
+  base_geom_->SetContactsEnabled(true);
+  base_geom_->ConnectContactCallback(boost::bind(&GazeboRosCreate::OnContact, this, _1));
+
+  wall_sensor_ = (RaySensor*)my_parent_->GetSensor("wall_sensor");
+  left_cliff_sensor_ = (RaySensor*)my_parent_->GetSensor("left_cliff_sensor");
+  right_cliff_sensor_ = (RaySensor*)my_parent_->GetSensor("right_cliff_sensor");
+  leftfront_cliff_sensor_ = (RaySensor*)my_parent_->GetSensor("leftfront_cliff_sensor");
+  rightfront_cliff_sensor_ = (RaySensor*)my_parent_->GetSensor("rightfront_cliff_sensor");
 
   if (!joints_[LEFT])
     gzthrow("The controller couldn't get left hinge joint");
@@ -133,11 +150,33 @@ void GazeboRosCreate::LoadChild( XMLConfigNode *node )
 
 void GazeboRosCreate::InitChild()
 {
+  sensor_state_.bumps_wheeldrops = 0x0;
 }
 
 void GazeboRosCreate::FiniChild()
 {
   rosnode_->shutdown();
+}
+
+void GazeboRosCreate::OnContact(const gazebo::Contact &contact)
+{
+  float y_overlap = 0.16495 * sin( 10 * (M_PI/180.0) );
+
+  for (unsigned int j=0; j < contact.positions.size(); j++)
+  {
+    // Make sure the contact is on the front bumper
+    if (contact.positions[j].x > 0.012 && contact.positions[j].z < 0.06 && 
+        contact.positions[j].z > 0.01)
+    {
+      // Right bump sensor
+      if (contact.positions[j].y <= y_overlap)
+        sensor_state_.bumps_wheeldrops |= 0x1; 
+      // Left bump sensor
+      if (contact.positions[j].y >= -y_overlap)
+        sensor_state_.bumps_wheeldrops |= 0x2; 
+    }
+  }
+
 }
 
 void GazeboRosCreate::UpdateChild()
@@ -229,6 +268,41 @@ void GazeboRosCreate::UpdateChild()
   js_.velocity[3] = joints_[REAR]->GetVelocity(0);
 
   joint_state_pub_.publish( js_ );
+
+  this->UpdateSensors();
+}
+
+void GazeboRosCreate::UpdateSensors()
+{
+  if (wall_sensor_->GetRange(0) < 0.04)
+    sensor_state_.wall = true;
+  else
+    sensor_state_.wall = false;
+
+  if (left_cliff_sensor_->GetRange(0) > 0.02)
+    sensor_state_.cliff_left = true;
+  else
+    sensor_state_.cliff_left = false;
+
+  if (right_cliff_sensor_->GetRange(0) > 0.02)
+    sensor_state_.cliff_right = true;
+  else
+    sensor_state_.cliff_right = false;
+
+  if (rightfront_cliff_sensor_->GetRange(0) > 0.02)
+    sensor_state_.cliff_front_right = true;
+  else
+    sensor_state_.cliff_front_right = false;
+
+  if (leftfront_cliff_sensor_->GetRange(0) > 0.02)
+    sensor_state_.cliff_front_left = true;
+  else
+    sensor_state_.cliff_front_left = false;
+
+  sensor_state_pub_.publish(sensor_state_);
+
+  // Reset the bump sensors
+  sensor_state_.bumps_wheeldrops = 0x0;
 }
 
 void GazeboRosCreate::OnCmdVel( const geometry_msgs::TwistConstPtr &msg)
