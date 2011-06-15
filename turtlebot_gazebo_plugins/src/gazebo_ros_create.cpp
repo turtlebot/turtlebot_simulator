@@ -83,17 +83,37 @@ void GazeboRosCreate::LoadChild( XMLConfigNode *node )
   torqueP_->Load(node);
 
   //TODO: fix this
-  base_geom_nameP_->SetValue("base_footprint_geom_base_link");
 
   joints_[LEFT] = my_parent_->GetJoint(**left_wheel_joint_nameP_);
   joints_[RIGHT] = my_parent_->GetJoint(**right_wheel_joint_nameP_);
   joints_[FRONT] = my_parent_->GetJoint(**front_castor_joint_nameP_);
   joints_[REAR] = my_parent_->GetJoint(**rear_castor_joint_nameP_);
+
+  base_geom_nameP_->SetValue("base_footprint_geom_base_link");
   base_geom_ = my_parent_->GetGeom(**base_geom_nameP_);
+  if (!base_geom_)
+  {
+    // This is a hack for ROS Diamond back. E-turtle and future releases
+    // will not need this, because it will contain the fixed-joint reduction
+    // in urdf2gazebo
+    base_geom_ = my_parent_->GetGeom("base_footprint_geom");
+    if (!base_geom_)
+    {
+      ROS_ERROR("Unable to find geom[%s]",(**base_geom_nameP_).c_str());
+      return;
+    }
+  }
+
   base_geom_->SetContactsEnabled(true);
   base_geom_->ConnectContactCallback(boost::bind(&GazeboRosCreate::OnContact, this, _1));
 
-  wall_sensor_ = (RaySensor*)my_parent_->GetSensor("wall_sensor");
+  wall_sensor_ = (RaySensor*)(my_parent_->GetSensor("wall_sensor"));
+  if (!wall_sensor_)
+  {
+    ROS_ERROR("Unable to find sensor[wall_sensor]");
+    return;
+  }
+
   left_cliff_sensor_ = (RaySensor*)my_parent_->GetSensor("left_cliff_sensor");
   right_cliff_sensor_ = (RaySensor*)my_parent_->GetSensor("right_cliff_sensor");
   leftfront_cliff_sensor_ = (RaySensor*)my_parent_->GetSensor("leftfront_cliff_sensor");
