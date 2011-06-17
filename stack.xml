@@ -4,5 +4,9 @@
   <license>BSD</license>  
   <review status="unreviewed" notes=""/>
   <url>http://ros.org/wiki/turtlebot_simulator</url>
+  <depend stack="common_msgs" /> <!-- nav_msgs, sensor_msgs, geometry_msgs -->
   <depend stack="ros" />
+  <depend stack="simulator_gazebo" /> <!-- gazebo -->
+  <depend stack="turtlebot" /> <!-- turtlebot_node -->
+
 </stack>
