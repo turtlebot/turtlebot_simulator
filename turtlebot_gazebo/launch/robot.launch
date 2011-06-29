@@ -11,6 +11,7 @@
     <param name="publish_frequency" type="double" value="30.0" />
   </node>
 
+
   <!-- The odometry estimator -->
   <node pkg="robot_pose_ekf" type="robot_pose_ekf" name="robot_pose_ekf">
     <param name="freq" value="10.0"/>
@@ -21,28 +22,6 @@
     <param name="vo_used" value="false"/>
     <remap from="imu_data" to="imu/data"/>
   </node>
-
-  <!-- Turtlebot Laptop Battery Diagnostics -->
-<!--  <node pkg="turtlebot_node" type="laptop_battery.py" name="turtlebot_laptop_battery">
-  </node> 
-  -->
-
-  <!-- Kinect -->
-  <!--<node pkg="nodelet" type="nodelet" name="openni_manager" output="screen" respawn="true" args="manager"/>
-
-  <node pkg="nodelet" type="nodelet" name="openni_camera" args="load openni_camera/OpenNINodelet openni_manager" respawn="true">
-    <param name="rgb_frame_id" value="kinect_rgb_optical_frame" />
-    <param name="depth_frame_id" value="kinect_depth_optical_frame" />
-    <param name="depth_registration" value="true" />
-    <param name="image_mode" value="2" />
-    <param name="depth_mode" value="2" />
-    <param name="debayering" value="2" />
-    <param name="depth_time_offset" value="0" />
-    <param name="image_time_offset" value="0" />
-
-    <rosparam command="load" file="$(find openni_camera)/info/openni_params.yaml" />
-  </node>
-  -->
 
   <!-- throttling -->
   <node pkg="nodelet" type="nodelet" name="pointcloud_throttle" args="load pointcloud_to_laserscan/CloudThrottle openni_manager" respawn="true">
