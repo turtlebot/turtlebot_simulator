@@ -70,6 +70,7 @@ namespace gazebo
       float odom_pose_[3];
       float odom_vel_[3];
 
+      bool set_joints_[4];
       Joint *joints_[4];
       Geom *base_geom_;
 

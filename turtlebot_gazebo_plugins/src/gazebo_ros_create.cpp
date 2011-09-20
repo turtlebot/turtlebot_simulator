@@ -49,6 +49,10 @@ GazeboRosCreate::GazeboRosCreate( Entity *parent )
   wheel_speed_[LEFT] = 0.0;
   wheel_speed_[RIGHT] = 0.0;
 
+  set_joints_[0] = false;
+  set_joints_[1] = false;
+  set_joints_[2] = false;
+  set_joints_[3] = false;
   joints_[0] = NULL;
   joints_[1] = NULL;
   joints_[2] = NULL;
@@ -82,13 +86,6 @@ void GazeboRosCreate::LoadChild( XMLConfigNode *node )
   base_geom_nameP_->Load(node);
   torqueP_->Load(node);
 
-  //TODO: fix this
-
-  joints_[LEFT] = my_parent_->GetJoint(**left_wheel_joint_nameP_);
-  joints_[RIGHT] = my_parent_->GetJoint(**right_wheel_joint_nameP_);
-  joints_[FRONT] = my_parent_->GetJoint(**front_castor_joint_nameP_);
-  joints_[REAR] = my_parent_->GetJoint(**rear_castor_joint_nameP_);
-
   base_geom_nameP_->SetValue("base_footprint_geom_base_link");
   base_geom_ = my_parent_->GetGeom(**base_geom_nameP_);
   if (!base_geom_)
@@ -118,18 +115,6 @@ void GazeboRosCreate::LoadChild( XMLConfigNode *node )
   right_cliff_sensor_ = (RaySensor*)my_parent_->GetSensor("right_cliff_sensor");
   leftfront_cliff_sensor_ = (RaySensor*)my_parent_->GetSensor("leftfront_cliff_sensor");
   rightfront_cliff_sensor_ = (RaySensor*)my_parent_->GetSensor("rightfront_cliff_sensor");
-
-  if (!joints_[LEFT])
-    gzthrow("The controller couldn't get left hinge joint");
-
-  if (!joints_[RIGHT])
-    gzthrow("The controller couldn't get right hinge joint");
-
-  if (!joints_[FRONT])
-    gzthrow("The controller couldn't get front castor joint");
-
-  if (!joints_[REAR])
-    gzthrow("The controller couldn't get rear castor joint");
 
   if (!ros::isInitialized())
   {
@@ -171,6 +156,19 @@ void GazeboRosCreate::LoadChild( XMLConfigNode *node )
 void GazeboRosCreate::InitChild()
 {
   sensor_state_.bumps_wheeldrops = 0x0;
+
+  //TODO: fix this
+
+  joints_[LEFT] = my_parent_->GetJoint(**left_wheel_joint_nameP_);
+  joints_[RIGHT] = my_parent_->GetJoint(**right_wheel_joint_nameP_);
+  joints_[FRONT] = my_parent_->GetJoint(**front_castor_joint_nameP_);
+  joints_[REAR] = my_parent_->GetJoint(**rear_castor_joint_nameP_);
+
+  if (joints_[LEFT]) set_joints_[LEFT] = true;
+  if (joints_[RIGHT]) set_joints_[RIGHT] = true;
+  if (joints_[FRONT]) set_joints_[FRONT] = true;
+  if (joints_[REAR]) set_joints_[REAR] = true;
+
 }
 
 void GazeboRosCreate::FiniChild()
@@ -216,8 +214,10 @@ void GazeboRosCreate::UpdateChild()
   prev_update_time_ = Simulator::Instance()->GetSimTime();
 
   // Distance travelled by front wheels
-  d1 = step_time.Double() * (wd / 2) * joints_[LEFT]->GetVelocity(0);
-  d2 = step_time.Double() * (wd / 2) * joints_[RIGHT]->GetVelocity(0);
+  if (set_joints_[LEFT])
+    d1 = step_time.Double() * (wd / 2) * joints_[LEFT]->GetVelocity(0);
+  if (set_joints_[RIGHT])
+    d2 = step_time.Double() * (wd / 2) * joints_[RIGHT]->GetVelocity(0);
 
   dr = (d1 + d2) / 2;
   da = (d2 - d1) / ws;
@@ -232,11 +232,16 @@ void GazeboRosCreate::UpdateChild()
   odom_vel_[1] = 0.0;
   odom_vel_[2] = da / step_time.Double();
 
-  joints_[LEFT]->SetVelocity( 0, wheel_speed_[LEFT] / (wd/2.0) );
-  joints_[RIGHT]->SetVelocity( 0, wheel_speed_[RIGHT] / (wd / 2.0) );
-
-  joints_[LEFT]->SetMaxForce( 0, **(torqueP_) );
-  joints_[RIGHT]->SetMaxForce( 0, **(torqueP_) );
+  if (set_joints_[LEFT])
+  {
+    joints_[LEFT]->SetVelocity( 0, wheel_speed_[LEFT] / (wd/2.0) );
+    joints_[LEFT]->SetMaxForce( 0, **(torqueP_) );
+  }
+  if (set_joints_[RIGHT])
+  {
+    joints_[RIGHT]->SetVelocity( 0, wheel_speed_[RIGHT] / (wd / 2.0) );
+    joints_[RIGHT]->SetMaxForce( 0, **(torqueP_) );
+  }
 
   nav_msgs::Odometry odom;
   odom.header.stamp = ros::Time::now();
@@ -275,17 +280,29 @@ void GazeboRosCreate::UpdateChild()
   odom_pub_.publish( odom ); 
 
   js_.header.stamp = ros::Time::now();
-  js_.position[0] = joints_[LEFT]->GetAngle(0).GetAsRadian();
-  js_.velocity[0] = joints_[LEFT]->GetVelocity(0);
+  if (this->set_joints_[LEFT])
+  {
+    js_.position[0] = joints_[LEFT]->GetAngle(0).GetAsRadian();
+    js_.velocity[0] = joints_[LEFT]->GetVelocity(0);
+  }
 
-  js_.position[1] = joints_[RIGHT]->GetAngle(0).GetAsRadian();
-  js_.velocity[1] = joints_[RIGHT]->GetVelocity(0);
+  if (this->set_joints_[RIGHT])
+  {
+    js_.position[1] = joints_[RIGHT]->GetAngle(0).GetAsRadian();
+    js_.velocity[1] = joints_[RIGHT]->GetVelocity(0);
+  }
 
-  js_.position[2] = joints_[FRONT]->GetAngle(0).GetAsRadian();
-  js_.velocity[2] = joints_[FRONT]->GetVelocity(0);
+  if (this->set_joints_[FRONT])
+  {
+    js_.position[2] = joints_[FRONT]->GetAngle(0).GetAsRadian();
+    js_.velocity[2] = joints_[FRONT]->GetVelocity(0);
+  }
 
-  js_.position[3] = joints_[REAR]->GetAngle(0).GetAsRadian();
-  js_.velocity[3] = joints_[REAR]->GetVelocity(0);
+  if (this->set_joints_[REAR])
+  {
+    js_.position[3] = joints_[REAR]->GetAngle(0).GetAsRadian();
+    js_.velocity[3] = joints_[REAR]->GetVelocity(0);
+  }
 
   joint_state_pub_.publish( js_ );
 
