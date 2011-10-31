@@ -25,8 +25,7 @@ enum {LEFT= 0, RIGHT=1, FRONT=2, REAR=3};
 GazeboRosCreate::GazeboRosCreate( Entity *parent )
   : Controller(parent)
 {
-  ros::MultiThreadedSpinner s(1);
-  boost::thread spinner_thread( boost::bind( &ros::spin, s) );
+  this->spinner_thread_ = new boost::thread( boost::bind( &GazeboRosCreate::spin, this) );
 
   my_parent_ = dynamic_cast<Model*>(parent);
 
@@ -61,6 +60,8 @@ GazeboRosCreate::GazeboRosCreate( Entity *parent )
 
 GazeboRosCreate::~GazeboRosCreate()
 {
+  this->spinner_thread_->join();
+  delete this->spinner_thread_;
   delete [] wheel_speed_;
   delete wheel_diamP_;
   delete wheel_sepP_;
@@ -351,3 +352,10 @@ void GazeboRosCreate::OnCmdVel( const geometry_msgs::TwistConstPtr &msg)
   wheel_speed_[LEFT] = vr - va * **(wheel_sepP_) / 2;
   wheel_speed_[RIGHT] = vr + va * **(wheel_sepP_) / 2;
 }
+
+void GazeboRosCreate::spin()
+{
+  ROS_ERROR("spinning");
+  while(ros::ok()) ros::spinOnce();
+}
+

@@ -84,6 +84,9 @@ namespace gazebo
       sensor_msgs::JointState js_;
 
       turtlebot_node::TurtlebotSensorState sensor_state_;
+
+      void spin();
+      boost::thread *spinner_thread_;
   };
 }
 #endif
