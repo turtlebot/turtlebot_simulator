@@ -355,7 +355,6 @@ void GazeboRosCreate::OnCmdVel( const geometry_msgs::TwistConstPtr &msg)
 
 void GazeboRosCreate::spin()
 {
-  ROS_ERROR("spinning");
   while(ros::ok()) ros::spinOnce();
 }
 
