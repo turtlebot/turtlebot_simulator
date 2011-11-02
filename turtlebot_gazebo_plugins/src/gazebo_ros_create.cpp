@@ -126,7 +126,7 @@ void GazeboRosCreate::LoadChild( XMLConfigNode *node )
 
   rosnode_ = new ros::NodeHandle( **node_namespaceP_ );
 
-  cmd_vel_sub_ = rosnode_->subscribe("cmd_vel", 1, &GazeboRosCreate::OnCmdVel, this );
+  cmd_vel_sub_ = rosnode_->subscribe("/cmd_vel", 1, &GazeboRosCreate::OnCmdVel, this );
 
   sensor_state_pub_ = rosnode_->advertise<turtlebot_node::TurtlebotSensorState>("sensor_state", 1);
   odom_pub_ = rosnode_->advertise<nav_msgs::Odometry>("/odom", 1);
