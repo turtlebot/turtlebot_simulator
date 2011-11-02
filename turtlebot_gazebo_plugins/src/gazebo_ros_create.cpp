@@ -152,6 +152,8 @@ void GazeboRosCreate::LoadChild( XMLConfigNode *node )
   js_.position.push_back(0);
   js_.velocity.push_back(0);
   js_.effort.push_back(0);
+
+  last_cmd_vel_time_ = 0;
 }
 
 void GazeboRosCreate::InitChild()
@@ -233,6 +235,7 @@ void GazeboRosCreate::UpdateChild()
   odom_vel_[1] = 0.0;
   odom_vel_[2] = da / step_time.Double();
 
+
   if (set_joints_[LEFT])
   {
     joints_[LEFT]->SetVelocity( 0, wheel_speed_[LEFT] / (wd/2.0) );
@@ -308,6 +311,15 @@ void GazeboRosCreate::UpdateChild()
   joint_state_pub_.publish( js_ );
 
   this->UpdateSensors();
+
+  //timeout if didn't receive cmd in a while
+  Time time_since_last_cmd = Simulator::Instance()->GetSimTime() - last_cmd_vel_time_;
+  if (time_since_last_cmd.Double() > 0.6)
+  {
+    wheel_speed_[LEFT] = 0;
+    wheel_speed_[RIGHT] = 0;
+  }
+
 }
 
 void GazeboRosCreate::UpdateSensors()
@@ -345,6 +357,7 @@ void GazeboRosCreate::UpdateSensors()
 
 void GazeboRosCreate::OnCmdVel( const geometry_msgs::TwistConstPtr &msg)
 {
+  last_cmd_vel_time_ = Simulator::Instance()->GetSimTime();
   double vr, va;
   vr = msg->linear.x;
   va = msg->angular.z;

@@ -66,6 +66,7 @@ namespace gazebo
 
       // Simulation time of the last update
       Time prev_update_time_;
+      Time last_cmd_vel_time_;
 
       float odom_pose_[3];
       float odom_vel_[3];
