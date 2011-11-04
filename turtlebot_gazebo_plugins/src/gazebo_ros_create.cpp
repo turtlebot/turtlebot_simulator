@@ -202,19 +202,19 @@ void GazeboRosCreate::OnContact(const gazebo::Contact &contact)
 
 void GazeboRosCreate::UpdateChild()
 {
+  Time time_now = Simulator::Instance()->GetSimTime();
+  Time step_time = time_now - prev_update_time_;
+  prev_update_time_ = time_now;
+
   double wd, ws;
   double d1, d2;
   double dr, da;
-  Time step_time;
 
   wd = **(wheel_diamP_);
   ws = **(wheel_sepP_);
 
   d1 = d2 = 0;
   dr = da = 0;
-
-  step_time = Simulator::Instance()->GetSimTime() - prev_update_time_;
-  prev_update_time_ = Simulator::Instance()->GetSimTime();
 
   // Distance travelled by front wheels
   if (set_joints_[LEFT])
@@ -248,7 +248,8 @@ void GazeboRosCreate::UpdateChild()
   }
 
   nav_msgs::Odometry odom;
-  odom.header.stamp = ros::Time::now();
+  odom.header.stamp.sec = time_now.sec;
+  odom.header.stamp.nsec = time_now.nsec;
   odom.header.frame_id = "odom";
   odom.child_frame_id = "base_footprint";
   odom.pose.pose.position.x = odom_pose_[0];
@@ -283,7 +284,8 @@ void GazeboRosCreate::UpdateChild()
 
   odom_pub_.publish( odom ); 
 
-  js_.header.stamp = ros::Time::now();
+  js_.header.stamp.sec = time_now.sec;
+  js_.header.stamp.nsec = time_now.nsec;
   if (this->set_joints_[LEFT])
   {
     js_.position[0] = joints_[LEFT]->GetAngle(0).GetAsRadian();
@@ -313,7 +315,7 @@ void GazeboRosCreate::UpdateChild()
   this->UpdateSensors();
 
   //timeout if didn't receive cmd in a while
-  Time time_since_last_cmd = Simulator::Instance()->GetSimTime() - last_cmd_vel_time_;
+  Time time_since_last_cmd = time_now - last_cmd_vel_time_;
   if (time_since_last_cmd.Double() > 0.6)
   {
     wheel_speed_[LEFT] = 0;

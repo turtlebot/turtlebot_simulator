@@ -25,12 +25,12 @@
   <!-- erp is typically .1-.8 -->
   <!-- here's the global contact cfm/erp -->
   <physics:ode>
-    <stepTime>0.003</stepTime>
+    <stepTime>0.001</stepTime>
     <gravity>0 0 -9.8</gravity>
     <cfm>0.0000000001</cfm>
     <erp>0.2</erp>
     <quickStep>true</quickStep>
-    <quickStepIters>20</quickStepIters>
+    <quickStepIters>200</quickStepIters>
     <quickStepW>1.0</quickStepW>
     <contactMaxCorrectingVel>100.0</contactMaxCorrectingVel>
     <contactSurfaceLayer>0.001</contactSurfaceLayer>
