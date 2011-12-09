@@ -222,6 +222,17 @@ void GazeboRosCreate::UpdateChild()
   if (set_joints_[RIGHT])
     d2 = step_time.Double() * (wd / 2) * joints_[RIGHT]->GetVelocity(0);
 
+  // Can see NaN values here, just zero them out if needed
+  if (isnan(d1)) {
+    ROS_WARN_THROTTLE(0.1, "Gazebo ROS Create plugin. NaN in d1. Step time: %.2f. WD: %.2f. Velocity: %.2f", step_time.Double(), wd, joints_[LEFT]->GetVelocity(0));
+    d1 = 0;
+  }
+
+  if (isnan(d2)) {
+    ROS_WARN_THROTTLE(0.1, "Gazebo ROS Create plugin. NaN in d2. Step time: %.2f. WD: %.2f. Velocity: %.2f", step_time.Double(), wd, joints_[RIGHT]->GetVelocity(0));
+    d2 = 0;
+  }
+
   dr = (d1 + d2) / 2;
   da = (d2 - d1) / ws;
 
