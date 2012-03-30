@@ -3,46 +3,21 @@
 #include <sensor_msgs/JointState.h>
 #include <geometry_msgs/Twist.h>
 #include <turtlebot_node/TurtlebotSensorState.h>
-#include <turtlebot_plugins/gazebo_ros_create.h>
 
-#include <gazebo/Joint.hh>
-#include <gazebo/Body.hh>
-#include <gazebo/Geom.hh>
-#include <gazebo/Simulator.hh>
-#include <gazebo/Entity.hh>
-#include <gazebo/GazeboError.hh>
-#include <gazebo/ControllerFactory.hh>
-#include <gazebo/XMLConfig.hh>
+#include "sensors/SensorManager.hh"
+#include "sensors/RaySensor.hh"
+
+#include <turtlebot_plugins/gazebo_ros_create.h>
 
 #include <ros/time.h>
 
 using namespace gazebo;
 
-GZ_REGISTER_DYNAMIC_CONTROLLER("gazebo_ros_create", GazeboRosCreate);
-
 enum {LEFT= 0, RIGHT=1, FRONT=2, REAR=3};
 
-GazeboRosCreate::GazeboRosCreate( Entity *parent )
-  : Controller(parent)
+GazeboRosCreate::GazeboRosCreate()
 {
   this->spinner_thread_ = new boost::thread( boost::bind( &GazeboRosCreate::spin, this) );
-
-  my_parent_ = dynamic_cast<Model*>(parent);
-
-  if (!my_parent_)
-    gzthrow("Gazebo_ROS_Create controller requires a Model as its parent");
-
-  Param::Begin(&this->parameters);
-  node_namespaceP_ = new ParamT<std::string>("node_namespace","",0);
-  left_wheel_joint_nameP_ = new ParamT<std::string>("left_wheel_joint","left_wheel_joint",1);
-  right_wheel_joint_nameP_ = new ParamT<std::string>("right_wheel_joint","right_wheel_joint",1);
-  front_castor_joint_nameP_ = new ParamT<std::string>("front_castor_joint","front_castor_joint",1);
-  rear_castor_joint_nameP_ = new ParamT<std::string>("rear_castor_joint","rear_castor_joint",1);
-  base_geom_nameP_ = new ParamT<std::string>("base_geom","base_geom",1);
-  wheel_sepP_ = new ParamT<float>("wheel_separation", 0.34,1);
-  wheel_diamP_ = new ParamT<float>("wheel_diameter", 0.15,1);
-  torqueP_ = new ParamT<float>("torque", 10.0, 1);
-  Param::End();
 
   wheel_speed_ = new float[2];
   wheel_speed_[LEFT] = 0.0;
@@ -52,70 +27,108 @@ GazeboRosCreate::GazeboRosCreate( Entity *parent )
   set_joints_[1] = false;
   set_joints_[2] = false;
   set_joints_[3] = false;
-  joints_[0] = NULL;
-  joints_[1] = NULL;
-  joints_[2] = NULL;
-  joints_[3] = NULL;
+  joints_[0].reset();
+  joints_[1].reset();
+  joints_[2].reset();
+  joints_[3].reset();
 }
 
 GazeboRosCreate::~GazeboRosCreate()
 {
+  rosnode_->shutdown();
   this->spinner_thread_->join();
   delete this->spinner_thread_;
   delete [] wheel_speed_;
-  delete wheel_diamP_;
-  delete wheel_sepP_;
-  delete torqueP_;
-  delete node_namespaceP_;
-  delete left_wheel_joint_nameP_;
-  delete right_wheel_joint_nameP_;
-  delete front_castor_joint_nameP_;
-  delete rear_castor_joint_nameP_;
-  delete base_geom_nameP_;
   delete rosnode_;
 }
     
-void GazeboRosCreate::LoadChild( XMLConfigNode *node )
+void GazeboRosCreate::Load(physics::ModelPtr _parent, sdf::ElementPtr _sdf )
 {
-  node_namespaceP_->Load(node);
-  left_wheel_joint_nameP_->Load(node);
-  right_wheel_joint_nameP_->Load(node);
-  front_castor_joint_nameP_->Load(node);
-  rear_castor_joint_nameP_->Load(node);
-  wheel_sepP_->Load(node);
-  wheel_diamP_->Load(node);
-  base_geom_nameP_->Load(node);
-  torqueP_->Load(node);
+  this->my_world_ = _parent->GetWorld();
 
-  base_geom_nameP_->SetValue("base_footprint_geom_base_link");
-  base_geom_ = my_parent_->GetGeom(**base_geom_nameP_);
+  this->my_parent_ = _parent;
+  if (!this->my_parent_)
+  {
+    ROS_FATAL("Gazebo_ROS_Create controller requires a Model as its parent");
+    return;
+  }
+
+
+  this->node_namespace_ = "";
+  if (_sdf->HasElement("node_namespace"))
+    this->node_namespace_ = _sdf->GetElement("node_namespace")->GetValueString() + "/";
+
+
+  left_wheel_joint_name_ = "left_wheel_joint";
+  if (_sdf->HasElement("left_wheel_joint"))
+    left_wheel_joint_name_ = _sdf->GetElement("left_wheel_joint")->GetValueString();
+
+  right_wheel_joint_name_ = "right_wheel_joint";
+  if (_sdf->HasElement("right_wheel_joint"))
+    right_wheel_joint_name_ = _sdf->GetElement("right_wheel_joint")->GetValueString();
+
+  front_castor_joint_name_ = "front_castor_joint";
+  if (_sdf->HasElement("front_castor_joint"))
+    front_castor_joint_name_ = _sdf->GetElement("front_castor_joint")->GetValueString();
+
+  rear_castor_joint_name_ = "rear_castor_joint";
+  if (_sdf->HasElement("rear_castor_joint"))
+    rear_castor_joint_name_ = _sdf->GetElement("rear_castor_joint")->GetValueString();
+
+  wheel_sep_ = 0.34;
+  if (_sdf->HasElement("wheel_separation"))
+    wheel_sep_ = _sdf->GetElement("wheel_separation")->GetValueDouble();
+
+  wheel_sep_ = 0.34;
+  if (_sdf->HasElement("wheel_separation"))
+    wheel_sep_ = _sdf->GetElement("wheel_separation")->GetValueDouble();
+
+  wheel_diam_ = 0.15;
+  if (_sdf->HasElement("wheel_diameter"))
+    wheel_diam_ = _sdf->GetElement("wheel_diameter")->GetValueDouble();
+
+  torque_ = 10.0;
+  if (_sdf->HasElement("torque"))
+    torque_ = _sdf->GetElement("torque")->GetValueDouble();
+
+
+  //base_geom_name_ = "base_geom";
+  base_geom_name_ = "base_footprint_geom_base_link";
+  if (_sdf->HasElement("base_geom"))
+    base_geom_name_ = _sdf->GetElement("base_geom")->GetValueString();
+  base_geom_ = my_parent_->GetChildCollision(base_geom_name_);
   if (!base_geom_)
   {
     // This is a hack for ROS Diamond back. E-turtle and future releases
     // will not need this, because it will contain the fixed-joint reduction
     // in urdf2gazebo
-    base_geom_ = my_parent_->GetGeom("base_footprint_geom");
+    base_geom_ = my_parent_->GetChildCollision("base_footprint_geom");
     if (!base_geom_)
     {
-      ROS_ERROR("Unable to find geom[%s]",(**base_geom_nameP_).c_str());
+      ROS_ERROR("Unable to find geom[%s]",base_geom_name_.c_str());
       return;
     }
   }
 
   base_geom_->SetContactsEnabled(true);
-  base_geom_->ConnectContactCallback(boost::bind(&GazeboRosCreate::OnContact, this, _1));
+  contact_event_ = base_geom_->ConnectContact(boost::bind(&GazeboRosCreate::OnContact, this, _1, _2));
 
-  wall_sensor_ = (RaySensor*)(my_parent_->GetSensor("wall_sensor"));
+  wall_sensor_ = boost::shared_dynamic_cast<sensors::RaySensor>(
+    sensors::SensorManager::Instance()->GetSensor("wall_sensor"));
   if (!wall_sensor_)
   {
     ROS_ERROR("Unable to find sensor[wall_sensor]");
     return;
   }
 
-  left_cliff_sensor_ = (RaySensor*)my_parent_->GetSensor("left_cliff_sensor");
-  right_cliff_sensor_ = (RaySensor*)my_parent_->GetSensor("right_cliff_sensor");
-  leftfront_cliff_sensor_ = (RaySensor*)my_parent_->GetSensor("leftfront_cliff_sensor");
-  rightfront_cliff_sensor_ = (RaySensor*)my_parent_->GetSensor("rightfront_cliff_sensor");
+  left_cliff_sensor_ = boost::shared_dynamic_cast<sensors::RaySensor>(
+    sensors::SensorManager::Instance()->GetSensor("left_cliff_sensor"));
+  right_cliff_sensor_ = boost::shared_dynamic_cast<sensors::RaySensor>(
+    sensors::SensorManager::Instance()->GetSensor("right_cliff_sensor"));
+  leftfront_cliff_sensor_ = boost::shared_dynamic_cast<sensors::RaySensor>(
+    sensors::SensorManager::Instance()->GetSensor("leftfront_cliff_sensor"));
+  rightfront_cliff_sensor_ = boost::shared_dynamic_cast<sensors::RaySensor>(
+    sensors::SensorManager::Instance()->GetSensor("rightfront_cliff_sensor"));
 
   if (!ros::isInitialized())
   {
@@ -124,7 +137,7 @@ void GazeboRosCreate::LoadChild( XMLConfigNode *node )
     ros::init(argc, argv, "gazebo_turtlebot", ros::init_options::NoSigintHandler|ros::init_options::AnonymousName);
   }
 
-  rosnode_ = new ros::NodeHandle( **node_namespaceP_ );
+  rosnode_ = new ros::NodeHandle( node_namespace_ );
 
   cmd_vel_sub_ = rosnode_->subscribe("/cmd_vel", 1, &GazeboRosCreate::OnCmdVel, this );
 
@@ -133,39 +146,37 @@ void GazeboRosCreate::LoadChild( XMLConfigNode *node )
 
   joint_state_pub_ = rosnode_->advertise<sensor_msgs::JointState>("/joint_states", 1);
 
-  js_.name.push_back( **left_wheel_joint_nameP_ );
+  js_.name.push_back( left_wheel_joint_name_ );
   js_.position.push_back(0);
   js_.velocity.push_back(0);
   js_.effort.push_back(0);
 
-  js_.name.push_back( **right_wheel_joint_nameP_ );
+  js_.name.push_back( right_wheel_joint_name_ );
   js_.position.push_back(0);
   js_.velocity.push_back(0);
   js_.effort.push_back(0);
 
-  js_.name.push_back( **front_castor_joint_nameP_ );
+  js_.name.push_back( front_castor_joint_name_ );
   js_.position.push_back(0);
   js_.velocity.push_back(0);
   js_.effort.push_back(0);
 
-  js_.name.push_back( **rear_castor_joint_nameP_ );
+  js_.name.push_back( rear_castor_joint_name_ );
   js_.position.push_back(0);
   js_.velocity.push_back(0);
   js_.effort.push_back(0);
 
   last_cmd_vel_time_ = 0;
-}
 
-void GazeboRosCreate::InitChild()
-{
+
   sensor_state_.bumps_wheeldrops = 0x0;
 
   //TODO: fix this
 
-  joints_[LEFT] = my_parent_->GetJoint(**left_wheel_joint_nameP_);
-  joints_[RIGHT] = my_parent_->GetJoint(**right_wheel_joint_nameP_);
-  joints_[FRONT] = my_parent_->GetJoint(**front_castor_joint_nameP_);
-  joints_[REAR] = my_parent_->GetJoint(**rear_castor_joint_nameP_);
+  joints_[LEFT] = my_parent_->GetJoint(left_wheel_joint_name_);
+  joints_[RIGHT] = my_parent_->GetJoint(right_wheel_joint_name_);
+  joints_[FRONT] = my_parent_->GetJoint(front_castor_joint_name_);
+  joints_[REAR] = my_parent_->GetJoint(rear_castor_joint_name_);
 
   if (joints_[LEFT]) set_joints_[LEFT] = true;
   if (joints_[RIGHT]) set_joints_[RIGHT] = true;
@@ -174,16 +185,12 @@ void GazeboRosCreate::InitChild()
 
 }
 
-void GazeboRosCreate::FiniChild()
-{
-  rosnode_->shutdown();
-}
 
-void GazeboRosCreate::OnContact(const gazebo::Contact &contact)
+void GazeboRosCreate::OnContact(const std::string &name, const physics::Contact &contact)
 {
   float y_overlap = 0.16495 * sin( 10 * (M_PI/180.0) );
 
-  for (unsigned int j=0; j < contact.positions.size(); j++)
+  for (unsigned int j=0; j < (unsigned int)contact.count; j++)
   {
     // Make sure the contact is on the front bumper
     if (contact.positions[j].x > 0.012 && contact.positions[j].z < 0.06 && 
@@ -202,16 +209,16 @@ void GazeboRosCreate::OnContact(const gazebo::Contact &contact)
 
 void GazeboRosCreate::UpdateChild()
 {
-  Time time_now = Simulator::Instance()->GetSimTime();
-  Time step_time = time_now - prev_update_time_;
+  common::Time time_now = this->my_world_->GetSimTime();
+  common::Time step_time = time_now - prev_update_time_;
   prev_update_time_ = time_now;
 
   double wd, ws;
   double d1, d2;
   double dr, da;
 
-  wd = **(wheel_diamP_);
-  ws = **(wheel_sepP_);
+  wd = wheel_diam_;
+  ws = wheel_sep_;
 
   d1 = d2 = 0;
   dr = da = 0;
@@ -250,12 +257,12 @@ void GazeboRosCreate::UpdateChild()
   if (set_joints_[LEFT])
   {
     joints_[LEFT]->SetVelocity( 0, wheel_speed_[LEFT] / (wd/2.0) );
-    joints_[LEFT]->SetMaxForce( 0, **(torqueP_) );
+    joints_[LEFT]->SetMaxForce( 0, torque_ );
   }
   if (set_joints_[RIGHT])
   {
     joints_[RIGHT]->SetVelocity( 0, wheel_speed_[RIGHT] / (wd / 2.0) );
-    joints_[RIGHT]->SetMaxForce( 0, **(torqueP_) );
+    joints_[RIGHT]->SetMaxForce( 0, torque_ );
   }
 
   nav_msgs::Odometry odom;
@@ -268,7 +275,7 @@ void GazeboRosCreate::UpdateChild()
   odom.pose.pose.position.z = 0;
 
   btQuaternion qt;
-  qt.setRPY(0,0,odom_pose_[2]);
+  qt.setEuler(0,0,odom_pose_[2]);
 
   odom.pose.pose.orientation.x = qt.getX();
   odom.pose.pose.orientation.y = qt.getY();
@@ -326,7 +333,7 @@ void GazeboRosCreate::UpdateChild()
   this->UpdateSensors();
 
   //timeout if didn't receive cmd in a while
-  Time time_since_last_cmd = time_now - last_cmd_vel_time_;
+  common::Time time_since_last_cmd = time_now - last_cmd_vel_time_;
   if (time_since_last_cmd.Double() > 0.6)
   {
     wheel_speed_[LEFT] = 0;
@@ -370,17 +377,19 @@ void GazeboRosCreate::UpdateSensors()
 
 void GazeboRosCreate::OnCmdVel( const geometry_msgs::TwistConstPtr &msg)
 {
-  last_cmd_vel_time_ = Simulator::Instance()->GetSimTime();
+  last_cmd_vel_time_ = this->my_world_->GetSimTime();
   double vr, va;
   vr = msg->linear.x;
   va = msg->angular.z;
 
-  wheel_speed_[LEFT] = vr - va * **(wheel_sepP_) / 2;
-  wheel_speed_[RIGHT] = vr + va * **(wheel_sepP_) / 2;
+  wheel_speed_[LEFT] = vr - va * (wheel_sep_) / 2;
+  wheel_speed_[RIGHT] = vr + va * (wheel_sep_) / 2;
 }
 
 void GazeboRosCreate::spin()
 {
   while(ros::ok()) ros::spinOnce();
 }
+
+GZ_REGISTER_MODEL_PLUGIN(GazeboRosCreate);
 

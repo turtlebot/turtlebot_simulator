@@ -1,11 +1,14 @@
 #ifndef GAZEBO_ROS_CREATE_H
 #define GAZEBO_ROS_CREATE_H
 
-#include <gazebo/Controller.hh>
-#include <gazebo/Model.hh>
-#include <gazebo/Geom.hh>
-#include <gazebo/Time.hh>
-#include <gazebo/RaySensor.hh>
+#include "gazebo.h"
+#include "physics/physics.h"
+#include "physics/PhysicsTypes.hh"
+#include "sensors/SensorTypes.hh"
+#include "transport/TransportTypes.hh"
+#include "common/Time.hh"
+#include "common/Plugin.hh"
+#include "common/Events.hh"
 
 #include <nav_msgs/Odometry.h>
 #include <geometry_msgs/TwistWithCovariance.h>
@@ -16,22 +19,40 @@
 
 namespace gazebo
 {
-  class GazeboRosCreate : public Controller
+  class GazeboRosCreate : public ModelPlugin
   {
     public: 
-      GazeboRosCreate( gazebo::Entity *parent );
+      GazeboRosCreate();
       virtual ~GazeboRosCreate();
           
-      virtual void LoadChild( XMLConfigNode *node );
-      virtual void InitChild();
-      virtual void FiniChild();
+      virtual void Load(physics::ModelPtr _parent, sdf::ElementPtr _sdf );
+
       virtual void UpdateChild();
   
     private:
 
       void UpdateSensors();
-      void OnContact(const gazebo::Contact &contact);
+      void OnContact(const std::string &name, const physics::Contact &contact);
       void OnCmdVel( const geometry_msgs::TwistConstPtr &msg);
+
+
+      /// Parameters
+      std::string node_namespace_;
+      std::string left_wheel_joint_name_;
+      std::string right_wheel_joint_name_;
+      std::string front_castor_joint_name_;
+      std::string rear_castor_joint_name_;
+      std::string base_geom_name_;
+
+      /// Separation between the wheels
+      float wheel_sep_;
+
+      /// Diameter of the wheels
+      float wheel_diam_;
+
+      ///Torque applied to the wheels
+      float torque_;
+
 
       ros::NodeHandle *rosnode_;
       //ros::Service operating_mode_srv_;
@@ -43,43 +64,28 @@ namespace gazebo
   
       ros::Subscriber cmd_vel_sub_;
 
-      ParamT<std::string> *node_namespaceP_;
-      ParamT<std::string> *left_wheel_joint_nameP_;
-      ParamT<std::string> *right_wheel_joint_nameP_;
-      ParamT<std::string> *front_castor_joint_nameP_;
-      ParamT<std::string> *rear_castor_joint_nameP_;
-      ParamT<std::string> *base_geom_nameP_;
-
-      /// Separation between the wheels
-      ParamT<float> *wheel_sepP_;
-
-      /// Diameter of the wheels
-      ParamT<float> *wheel_diamP_;
-
-      ///Torque applied to the wheels
-      ParamT<float> *torqueP_;
-
-      Model *my_parent_;
+      physics::WorldPtr my_world_;
+      physics::ModelPtr my_parent_;
 
       /// Speeds of the wheels
       float *wheel_speed_;
 
       // Simulation time of the last update
-      Time prev_update_time_;
-      Time last_cmd_vel_time_;
+      common::Time prev_update_time_;
+      common::Time last_cmd_vel_time_;
 
       float odom_pose_[3];
       float odom_vel_[3];
 
       bool set_joints_[4];
-      Joint *joints_[4];
-      Geom *base_geom_;
+      physics::JointPtr joints_[4];
+      physics::CollisionPtr base_geom_;
 
-      RaySensor *left_cliff_sensor_;
-      RaySensor *leftfront_cliff_sensor_;
-      RaySensor *rightfront_cliff_sensor_;
-      RaySensor *right_cliff_sensor_;
-      RaySensor *wall_sensor_;
+      sensors::RaySensorPtr left_cliff_sensor_;
+      sensors::RaySensorPtr leftfront_cliff_sensor_;
+      sensors::RaySensorPtr rightfront_cliff_sensor_;
+      sensors::RaySensorPtr right_cliff_sensor_;
+      sensors::RaySensorPtr wall_sensor_;
 
       tf::TransformBroadcaster transform_broadcaster_;
       sensor_msgs::JointState js_;
@@ -88,6 +94,8 @@ namespace gazebo
 
       void spin();
       boost::thread *spinner_thread_;
+
+      event::ConnectionPtr contact_event_;
   };
 }
 #endif
