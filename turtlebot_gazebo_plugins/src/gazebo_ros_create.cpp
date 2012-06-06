@@ -153,6 +153,7 @@ void GazeboRosCreate::LoadChild( XMLConfigNode *node )
   js_.velocity.push_back(0);
   js_.effort.push_back(0);
 
+  prev_update_time_ = 0;
   last_cmd_vel_time_ = 0;
 }
 
@@ -172,6 +173,12 @@ void GazeboRosCreate::InitChild()
   if (joints_[FRONT]) set_joints_[FRONT] = true;
   if (joints_[REAR]) set_joints_[REAR] = true;
 
+  //initialize time and odometry position
+  prev_update_time_ = last_cmd_vel_time_ =
+    Simulator::Instance()->GetSimTime();
+  odom_pose_[0] = 0.0;
+  odom_pose_[1] = 0.0;
+  odom_pose_[2] = 0.0;
 }
 
 void GazeboRosCreate::FiniChild()
