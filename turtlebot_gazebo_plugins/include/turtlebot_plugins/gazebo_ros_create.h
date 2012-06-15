@@ -1,7 +1,6 @@
 #ifndef GAZEBO_ROS_CREATE_H
 #define GAZEBO_ROS_CREATE_H
 
-#include "gazebo.h"
 #include "physics/physics.h"
 #include "physics/PhysicsTypes.hh"
 #include "sensors/SensorTypes.hh"
@@ -96,6 +95,9 @@ namespace gazebo
       boost::thread *spinner_thread_;
 
       event::ConnectionPtr contact_event_;
+
+      // Pointer to the update event connection
+      event::ConnectionPtr updateConnection;
   };
 }
 #endif

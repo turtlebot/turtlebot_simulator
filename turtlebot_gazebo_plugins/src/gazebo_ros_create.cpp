@@ -113,6 +113,15 @@ void GazeboRosCreate::Load(physics::ModelPtr _parent, sdf::ElementPtr _sdf )
   base_geom_->SetContactsEnabled(true);
   contact_event_ = base_geom_->ConnectContact(boost::bind(&GazeboRosCreate::OnContact, this, _1, _2));
 
+  // Get then name of the parent model
+  std::string modelName = _sdf->GetParent()->GetValueString("name");
+
+  // Listen to the update event. This event is broadcast every
+  // simulation iteration.
+  this->updateConnection = event::Events::ConnectWorldUpdateStart(
+      boost::bind(&GazeboRosCreate::UpdateChild, this));
+  gzdbg << "plugin model name: " << modelName << "\n";
+
   wall_sensor_ = boost::shared_dynamic_cast<sensors::RaySensor>(
     sensors::SensorManager::Instance()->GetSensor("wall_sensor"));
   if (!wall_sensor_)
