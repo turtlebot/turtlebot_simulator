@@ -139,6 +139,12 @@ void GazeboRosCreate::Load(physics::ModelPtr _parent, sdf::ElementPtr _sdf )
   rightfront_cliff_sensor_ = boost::shared_dynamic_cast<sensors::RaySensor>(
     sensors::SensorManager::Instance()->GetSensor("rightfront_cliff_sensor"));
 
+  wall_sensor_->SetActive(true);
+  left_cliff_sensor_->SetActive(true);
+  right_cliff_sensor_->SetActive(true);
+  rightfront_cliff_sensor_->SetActive(true);
+  leftfront_cliff_sensor_->SetActive(true);
+
   if (!ros::isInitialized())
   {
     int argc = 0;
