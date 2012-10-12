@@ -1,5 +1,5 @@
 <launch>
-  <param name="robot_description" command="$(find xacro)/xacro.py '$(find kobuki_description)/robots/kobukibot_kinect.urdf.xacro'" />
+  <param name="robot_description" command="$(find xacro)/xacro.py '$(find turtlebot_description)/robots/turtlebot2_kinect.urdf.xacro'" />
 
   <node name="spawn_turtlebot_model" pkg="gazebo" type="spawn_model" args="$(optenv ROBOT_INITIAL_POSE) -unpause -urdf -param robot_description -model turtlebot" respawn="false" output="screen"/>
 
@@ -11,9 +11,7 @@
     <param name="publish_frequency" type="double" value="30.0" />
   </node>
 
-
   <!-- The odometry estimator -->
-
   <node pkg="robot_pose_ekf" type="robot_pose_ekf" name="robot_pose_ekf">
     <param name="freq" value="30.0"/>
     <param name="sensor_timeout" value="1.0"/>
@@ -23,11 +21,15 @@
     <param name="vo_used" value="false"/>
   </node>
 
+  <!-- nodelet manager for simulation, since we do not launch openni -->
+  <node pkg="nodelet" type="nodelet" name="openni_manager" args="manager">
+    <param name="num_worker_threads" value="3"/>
+  </node>
 
-  <!-- throttling -->
+  <!-- Point cloud throttling -->
   <node pkg="nodelet" type="nodelet" name="pointcloud_throttle" args="load pointcloud_to_laserscan/CloudThrottle openni_manager" respawn="true">
     <param name="max_rate" value="20.0"/>
-    <remap from="cloud_in" to="/camera/depth/points"/>
+    <remap from="cloud_in" to="camera/depth/points"/>
     <remap from="cloud_out" to="cloud_throttled"/>
   </node>
 
@@ -37,7 +39,8 @@
     <!-- heights are in the (optical?) frame of the kinect -->
     <param name="min_height" value="-0.15"/>
     <param name="max_height" value="0.15"/>
-    <remap from="cloud" to="/cloud_throttled"/>
+    <remap from="cloud" to="cloud_throttled"/>
+    <remap from="scan" to="scan"/>
   </node>
 
   <!-- Fake Laser (narrow one, for localization -->
@@ -46,8 +49,8 @@
     <!-- heights are in the (optical?) frame of the kinect -->
     <param name="min_height" value="-0.025"/>
     <param name="max_height" value="0.025"/>
-    <remap from="cloud" to="/cloud_throttled"/>
-    <remap from="scan" to="/narrow_scan"/>
+    <remap from="cloud" to="cloud_throttled"/>
+    <remap from="scan" to="narrow_scan"/>
   </node>
 
 
