@@ -1,5 +1,8 @@
 <launch>
   <arg name="base" value="$(optenv TURTLEBOT_BASE kobuki)"/> <!-- create, rhoomba -->
+  <arg name="battery"    value="$(optenv TURTLEBOT_BATTERY /proc/acpi/battery/BAT0)"/>  <!-- /proc/acpi/battery/BAT0 --> 
+  <arg name="stacks"     value="$(optenv TURTLEBOT_STACKS hexagons)"/>  <!-- circles, hexagons --> 
+  <arg name="3d_sensor"  value="$(optenv TURTLEBOT_3D_SENSOR kinect)"/>  <!-- kinect, asus_xtion_pro --> 
 
   <!-- start gazebo with an empty plane -->
   <param name="/use_sim_time" value="true" />
@@ -7,6 +10,11 @@
   <node name="gazebo" pkg="gazebo" type="debug" args="-u $(find turtlebot_gazebo)/worlds/empty.world" respawn="false" output="screen"/>
   <node name="gazebo_gui" pkg="gazebo" type="gui" />
 
+  <include file="$(find turtlebot_gazebo)/launch/_$(arg base).launch">
+    <arg name="base" value="$(arg base)"/>
+    <arg name="stacks" value="$(arg stacks)"/>
+    <arg name="3d_sensor" value="$(arg 3d_sensor)"/>
 
-  <include file="$(find turtlebot_gazebo)/launch/$(arg base).launch"/>
+     
+  </include>
 </launch>

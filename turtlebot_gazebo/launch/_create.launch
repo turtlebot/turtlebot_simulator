@@ -1,5 +1,10 @@
 <launch>
-  <param name="robot_description" command="$(find xacro)/xacro.py '$(find turtlebot_description)/urdf/turtlebot.urdf.xacro'" />
+  <arg name="base"/>
+  <arg name="stacks"/>
+  <arg name="3d_sensor"/>
+
+  <arg name="urdf_file" default="$(find xacro)/xacro.py '$(find turtlebot_description)/robots/$(arg base)_$(arg stacks)_$(arg 3d_sensor).urdf.xacro'" />
+  <param name="robot_description" command="$(arg urdf_file)" />
 
   <node name="spawn_turtlebot_model" pkg="gazebo" type="spawn_model" args="$(optenv ROBOT_INITIAL_POSE) -unpause -urdf -param robot_description -model turtlebot" respawn="false" output="screen"/>
 
@@ -13,7 +18,6 @@
 
 
   <!-- The odometry estimator -->
-
   <node pkg="robot_pose_ekf" type="robot_pose_ekf" name="robot_pose_ekf">
     <param name="freq" value="30.0"/>
     <param name="sensor_timeout" value="1.0"/>
@@ -49,6 +53,4 @@
     <remap from="cloud" to="/cloud_throttled"/>
     <remap from="scan" to="/narrow_scan"/>
   </node>
-
-
 </launch>
