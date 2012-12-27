@@ -89,7 +89,7 @@ namespace gazebo
       tf::TransformBroadcaster transform_broadcaster_;
       sensor_msgs::JointState js_;
 
-      turtlebot_node::TurtlebotSensorState sensor_state_;
+      create_node::TurtlebotSensorState sensor_state_;
 
       void spin();
       boost::thread *spinner_thread_;

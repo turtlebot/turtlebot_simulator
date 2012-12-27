@@ -1,18 +1,18 @@
 <package>
-  <description brief="turtlebot_gazebo_plugins">
+  <description brief="create_gazebo_plugins">
 
-     turtlebot_plugins
+     create_gazebo_plugins
 
   </description>
   <author>Nate Koenig</author>
   <license>BSD</license>
   <review status="unreviewed" notes=""/>
-  <url>http://ros.org/wiki/turtlebot_gazebo_plugins</url>
+  <url>http://ros.org/wiki/create_gazebo_plugins</url>
   <depend package="gazebo"/>
   <depend package="nav_msgs"/>
   <depend package="geometry_msgs"/>
   <depend package="sensor_msgs"/>
-  <depend package="turtlebot_node"/>
+  <depend package="create_node"/>
 
   <export>
     <cpp cflags="-I${prefix}/include" lflags="-Wl,-rpath,${prefix}/lib -L${prefix}/lib" />
