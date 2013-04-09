@@ -8,7 +8,11 @@
   <license>BSD</license>
   <review status="unreviewed" notes=""/>
   <url>http://ros.org/wiki/turtlebot_gazebo</url>
+  <depend package="gazebo"/>
   <depend package="gazebo_plugins"/>
+  <depend package="robot_state_publisher"/>
+  <depend package="turtlebot_bringup"/>
+  <depend package="turtlebot_description"/>
 </package>
 
 
