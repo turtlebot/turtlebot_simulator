@@ -154,12 +154,12 @@ void GazeboRosCreate::Load(physics::ModelPtr _parent, sdf::ElementPtr _sdf )
 
   rosnode_ = new ros::NodeHandle( node_namespace_ );
 
-  cmd_vel_sub_ = rosnode_->subscribe("/cmd_vel", 1, &GazeboRosCreate::OnCmdVel, this );
+  cmd_vel_sub_ = rosnode_->subscribe("cmd_vel", 1, &GazeboRosCreate::OnCmdVel, this );
 
   sensor_state_pub_ = rosnode_->advertise<create_node::TurtlebotSensorState>("sensor_state", 1);
-  odom_pub_ = rosnode_->advertise<nav_msgs::Odometry>("/odom", 1);
+  odom_pub_ = rosnode_->advertise<nav_msgs::Odometry>("odom", 1);
 
-  joint_state_pub_ = rosnode_->advertise<sensor_msgs::JointState>("/joint_states", 1);
+  joint_state_pub_ = rosnode_->advertise<sensor_msgs::JointState>("joint_states", 1);
 
   js_.name.push_back( left_wheel_joint_name_ );
   js_.position.push_back(0);
