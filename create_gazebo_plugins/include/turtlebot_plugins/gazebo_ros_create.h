@@ -1,7 +1,7 @@
 #ifndef GAZEBO_ROS_CREATE_H
 #define GAZEBO_ROS_CREATE_H
 
-#include "physics/physics.h"
+#include "physics/physics.hh"
 #include "physics/PhysicsTypes.hh"
 #include "sensors/SensorTypes.hh"
 #include "transport/TransportTypes.hh"
