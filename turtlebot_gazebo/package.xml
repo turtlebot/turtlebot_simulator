@@ -1,0 +1,15 @@
+<package>
+  <name>turtlebot_gazebo</name>
+  <version>1.9.1</version>
+  <description>Gazebo launchers and worlds for TurtleBot simulation</description>
+  <maintainer email="marcus.liebhardt@yujinrobot.com">Marcus Liebhardt</maintainer>
+  <license>BSD</license>
+  <url type="website">http://ros.org/wiki/turtlebot_gazebo</url>
+  <author email="turtlebot@willowgarage.com">Willow Garage</author>
+  
+  <buildtool_depend>catkin</buildtool_depend>
+  <run_depend>gazebo_ros</run_depend>
+  <run_depend>robot_state_publisher</run_depend>
+  <run_depend>turtlebot_description</run_depend>
+  <run_depend>xacro</run_depend>
+</package>
