@@ -14,7 +14,7 @@
     <!-- more default parameters can be changed here -->
   </include>
 
-  <include file="$(find turtlebot_gazebo)/launch/_$(arg base).launch">
+  <include file="$(find turtlebot_gazebo)/launch/_$(arg base).xml">
     <arg name="base" value="$(arg base)"/>
     <arg name="stacks" value="$(arg stacks)"/>
     <arg name="3d_sensor" value="$(arg 3d_sensor)"/>
