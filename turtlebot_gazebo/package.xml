@@ -8,8 +8,14 @@
   <author email="turtlebot@willowgarage.com">Willow Garage</author>
   
   <buildtool_depend>catkin</buildtool_depend>
+  
+  <run_depend>cmd_vel_mux</run_depend>
+  <run_depend>diagnostic_aggregator</run_depend>
+  <run_depend>depthimage_to_laserscan</run_depend>
   <run_depend>gazebo_ros</run_depend>
+  <run_depend>robot_pose_ekf</run_depend>
   <run_depend>robot_state_publisher</run_depend>
+  <run_depend>turtlebot_bringup</run_depend>
   <run_depend>turtlebot_description</run_depend>
   <run_depend>xacro</run_depend>
 </package>
