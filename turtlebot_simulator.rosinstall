@@ -1,0 +1,11 @@
+- git: {local-name: kobuki, uri: 'https://github.com/bit-pirate/kobuki.git', version: hydro-devel}
+- git: {local-name: kobuki_desktop, uri: 'https://github.com/yujinrobot/kobuki_desktop.git',
+    version: hydro-devel}
+- git: {local-name: turtlebot, uri: 'https://github.com/bit-pirate/turtlebot.git',
+    version: hydro-devel}
+- git: {local-name: turtlebot_create, uri: 'http://github.com/turtlebot/turtlebot_create.git',
+    version: hydro-devel}
+- git: {local-name: turtlebot_simulator, uri: 'http://github.com/turtlebot/turtlebot_simulator.git',
+    version: hydro-devel}
+- git: {local-name: turtlebot_create_desktop, uri: 'https://github.com/turtlebot/turtlebot_create_desktop.git',
+    version: hydro-devel}
