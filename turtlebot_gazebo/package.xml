@@ -5,6 +5,8 @@
   <maintainer email="marcus.liebhardt@yujinrobot.com">Marcus Liebhardt</maintainer>
   <license>BSD</license>
   <url type="website">http://ros.org/wiki/turtlebot_gazebo</url>
+  <url type="repository">https://github.com/turtlebot/turtlebot_simulator</url>
+  <url type="bugtracker">https://github.com/turtlebot/turtlebot_simulator/issues</url>
   <author email="turtlebot@willowgarage.com">Willow Garage</author>
   
   <buildtool_depend>catkin</buildtool_depend>
