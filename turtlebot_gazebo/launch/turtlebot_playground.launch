@@ -30,23 +30,4 @@
     <remap from="image" to="/camera/depth/image_raw"/>
     <remap from="scan" to="/scan"/>
   </node>
-
-  <!-- Fake Laser (narrow one, for localization TODO -->
-<!--   <node pkg="nodelet" type="nodelet" name="kinect_laser_narrow" args="load pointcloud_to_laserscan/CloudToScan openni_manager" respawn="true"> -->
-<!--     <param name="output_frame_id" value="/camera_depth_frame"/> -->
-<!--     heights are in the (optical?) frame of the kinect -->
-<!--     <param name="min_height" value="-0.025"/> -->
-<!--     <param name="max_height" value="0.025"/> -->
-<!--     <remap from="cloud" to="/cloud_throttled"/> -->
-<!--     <remap from="scan" to="/narrow_scan"/> -->
-<!--   </node> -->
-  
-  <!-- TODO: Point cloud throttling - Still needed? -->
-<!--   <node pkg="nodelet" type="nodelet" name="pointcloud_nodelet_manager" args="manager"/> -->
-<!--   <node pkg="nodelet" type="nodelet" name="pointcloud_throttle" -->
-<!--         args="load pointcloud_to_laserscan/CloudThrottle nodelet_manager"> -->
-<!--     <param name="max_rate" value="20.0"/> -->
-<!--     <remap from="cloud_in" to="/camera/depth/points"/> -->
-<!--     <remap from="cloud_out" to="cloud_throttled"/> -->
-<!--   </node> -->
 </launch>
