@@ -1,0 +1,38 @@
+<!-- 
+  Turtlebot global navigation simulation:
+  - stage
+  - map_server
+  - move_base
+  - static map
+  - amcl
+  - ar_track
+  - rviz view
+ -->
+<launch>
+  <arg name="base"       value="$(optenv TURTLEBOT_BASE kobuki)"/>  <!-- create, rhoomba -->
+  <arg name="stacks"     value="$(optenv TURTLEBOT_STACKS hexagons)"/>  <!-- circles, hexagons -->
+  <arg name="3d_sensor"  value="$(optenv TURTLEBOT_3D_SENSOR kinect)"/>  <!-- kinect, asus_xtion_pro -->
+  
+  <!-- Name of the map to use (without path nor extension) and initial position -->
+  <arg name="map_name"       default="maze"/> <!-- robopark_plan -->
+  <arg name="is_elastic_planner" default="false"/>
+  <arg name="initial_pose_x" default="2.0"/>
+  <arg name="initial_pose_y" default="2.0"/>
+  <arg name="initial_pose_a" default="0.0"/>
+
+  <param name="/use_sim_time" value="true"/>
+
+  <include file="$(find turtlebot_stage)/launch/turtlebot_in_stage.launch">
+    <arg name="map_name"       value="$(arg map_name)"/> <!-- robopark_plan -->
+    <arg name="is_elastic_planner" value="$(arg is_elastic_planner)"/>
+    <arg name="initial_pose_x" value="$(arg initial_pose_x)"/>
+    <arg name="initial_pose_y" value="$(arg initial_pose_y)"/>
+    <arg name="initial_pose_a" value="$(arg initial_pose_a)"/>
+  </include>
+
+  <!-- Virtual sensor -->
+  <include file="$(find turtlebot_stage)/launch/includes/_virtual_sensor.launch"/>
+
+  <!-- Annotation publisher-->
+  <include file="$(find turtlebot_stage)/launch/includes/_annotations_pub.launch"/>
+</launch>

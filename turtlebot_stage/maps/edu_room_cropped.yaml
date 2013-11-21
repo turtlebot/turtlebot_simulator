@@ -1,0 +1,6 @@
+free_thresh: 0.196
+image: edu_room_cropped.pgm
+negate: 0
+occupied_thresh: 0.65
+origin: [-1.549999999999999, -0.5999999999999979, 0.0]
+resolution: 0.05

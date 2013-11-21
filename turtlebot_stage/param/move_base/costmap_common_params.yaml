@@ -1,0 +1,22 @@
+max_obstacle_height: 0.80
+obstacle_range: 2.0  # half map side
+raytrace_range: 2.5
+
+#inflation_layer:
+robot_radius: 0.18
+inflation_radius: 0.40
+
+#obstacles_layer:
+# voxel map configuration; z-voxels 0, 1, 2 and 4 are filled respectivelly by bumpers, ir_scan, kn_scan and vs_scan
+map_type: voxel
+origin_z: 0.0
+z_resolution: 0.1
+z_voxels: 5
+publish_voxel_map: true
+
+observation_sources: kn_scan ir_scan vs_scan bumpers
+
+vs_scan: {data_type: LaserScan, topic: virtual_sensor_scan, marking: true, clearing: true, min_obstacle_height: 0.3, max_obstacle_height: 0.8}
+kn_scan: {data_type: LaserScan, topic:                scan, marking: true, clearing: true, min_obstacle_height: 0.148, max_obstacle_height: 0.3}
+ir_scan: {data_type: LaserScan, topic:             ir_scan, marking: true, clearing: true, min_obstacle_height: 0.1, max_obstacle_height: 0.2}
+bumpers: {data_type: PointCloud2, topic: /mobile_base/sensors/bumper_pointcloud, marking: true, clearing: true, min_obstacle_height: 0.0, max_obstacle_height: 0.1}
