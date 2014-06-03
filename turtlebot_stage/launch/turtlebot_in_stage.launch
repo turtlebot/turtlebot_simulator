@@ -1,11 +1,10 @@
 <!-- 
-  Turtlebot global navigation simulation:
+  Turtlebot navigation simulation:
   - stage
   - map_server
   - move_base
   - static map
   - amcl
-  - ar_track
   - rviz view
  -->
 <launch>
@@ -15,7 +14,6 @@
   
   <!-- Name of the map to use (without path nor extension) and initial position -->
   <arg name="map_name"       default="maze"/> <!-- robopark_plan -->
-  <arg name="is_elastic_planner" default="false"/>
   <arg name="initial_pose_x" default="2.0"/>
   <arg name="initial_pose_y" default="2.0"/>
   <arg name="initial_pose_a" default="0.0"/>
@@ -54,25 +52,24 @@
     <param name="use_gui" value="true"/>
   </node>
 
-  <!-- velocity commands multiplexer -->
+  <!-- Command Velocity multiplexer -->
   <node pkg="nodelet" type="nodelet" name="mobile_base_nodelet_manager" args="manager"/>
   <node pkg="nodelet" type="nodelet" name="cmd_vel_mux" args="load yocs_cmd_vel_mux/CmdVelMuxNodelet mobile_base_nodelet_manager">
-    <param name="yaml_cfg_file" value="$(find turtlebot_stage)/param/vel_multiplexer.yaml" />
+    <param name="yaml_cfg_file" value="$(find turtlebot_bringup)/param/mux.yaml"/>
+    <remap from="cmd_vel_mux/output" to="mobile_base/commands/velocity"/>
   </node>
 
   <!--  ************** Navigation  ***************  -->
-  <!-- it selects local planner between trajectory and elastic band with is_elastic_planner argument. 
-       Elastic band planner requires eband_local_planner/EBandPlannerROS installed -->
-  <include unless="$(arg is_elastic_planner)" file="$(find turtlebot_stage)/launch/includes/_move_base.launch"/>
-  <include if="$(arg is_elastic_planner)" file="$(find turtlebot_stage)/launch/includes/_move_base_eband.launch"/>
+  <include file="$(find turtlebot_navigation)/launch/includes/move_base.launch.xml"/>
 
-  <!--  ****** Geometric and semantic map servers *****  -->
+  <!--  ****** Maps *****  -->
   <node name="map_server" pkg="map_server" type="map_server" args="$(find turtlebot_stage)/maps/$(arg map_name).yaml">
     <param name="frame_id" value="/map"/>
   </node>
 
-  <include file="$(find turtlebot_stage)/launch/includes/_amcl.launch">
+  <include file="$(find turtlebot_navigation)/launch/includes/amcl.launch.xml">
     <arg name="scan_topic" value="scan"/>
+    <arg name="use_map_topic" value="true"/>
     <arg name="initial_pose_x" value="$(arg initial_pose_x)"/>
     <arg name="initial_pose_y" value="$(arg initial_pose_y)"/>
     <arg name="initial_pose_a" value="$(arg initial_pose_a)"/>

@@ -17,7 +17,7 @@ define turtlebot position
 
   odom_error [0.03 0.03 999999 999999 999999 0.02]
 
-  size [ 0.33 0.33 0.40 ]
+  size [ 0.2552 0.2552 0.40 ]
   origin [ 0.0 0.0 0.0 0.0 ]
   gui_nose 1
   drive "diff"
