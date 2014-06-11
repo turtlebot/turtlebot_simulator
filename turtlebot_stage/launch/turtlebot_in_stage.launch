@@ -18,6 +18,8 @@
   <arg name="initial_pose_y" default="2.0"/>
   <arg name="initial_pose_a" default="0.0"/>
 
+  <arg name="eband" default="false"/>
+
   <param name="/use_sim_time" value="true"/>
   <!--  ******************** Stage ********************  -->
   <!-- 
@@ -60,7 +62,8 @@
   </node>
 
   <!--  ************** Navigation  ***************  -->
-  <include file="$(find turtlebot_navigation)/launch/includes/move_base.launch.xml"/>
+  <include unless="$(arg eband)" file="$(find turtlebot_stage)/launch/includes/move_base.launch.xml"/>
+  <include if="$(arg eband)" file="$(find turtlebot_stage)/launch/includes/move_base_eband.launch.xml"/>
 
   <!--  ****** Maps *****  -->
   <node name="map_server" pkg="map_server" type="map_server" args="$(find turtlebot_stage)/maps/$(arg map_name).yaml">

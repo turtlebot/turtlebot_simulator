@@ -1,0 +1,8 @@
+<launch>
+    <node pkg="yocs_virtual_sensor" type="wall_publisher.py" name="wall_publisher" output="screen">
+         <param name="filename" type="string" value="$(find turtlebot_stage)/annotations/wall_list.yaml" />
+    </node>
+    <node pkg="yocs_virtual_sensor" type="column_publisher.py" name="column_publisher" output="screen">
+         <param name="filename" type="string" value="$(find turtlebot_stage)/annotations/column_list.yaml" />
+    </node>
+</launch>
