@@ -18,6 +18,10 @@
   <run_depend>stage_ros</run_depend>
   <run_depend>navigation</run_depend>
   <run_depend>turtlebot_bringup</run_depend>
+  <run_depend>turtlebot_navigation</run_depend>
   <run_depend>yocs_virtual_sensor</run_depend>
   <run_depend>yocs_velocity_smoother</run_depend>
+  
+  <!-- Experiments with the WCF (World Canvas Framework) -->
+  <run_depend>world_canvas_client_py</run_depend>
 </package>

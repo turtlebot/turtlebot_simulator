@@ -1,0 +1,51 @@
+<!-- 
+  Turtlebot global navigation simulation to test the WCF (World Canvas Framework)
+  - stage
+  - move_base
+  - static map
+  - amcl
+  - ar_track
+  - rviz view
+  - virtual sensor
+  - world canvas server
+  - world canvas client
+    > load map
+    > load annotations
+  WARN: don't forget to launch populate_world.launch to create the world on WCF database!
+ -->
+<launch>
+  <arg name="base"       value="$(optenv TURTLEBOT_BASE kobuki)"/>  <!-- create, rhoomba -->
+  <arg name="stacks"     value="$(optenv TURTLEBOT_STACKS hexagons)"/>  <!-- circles, hexagons -->
+  <arg name="3d_sensor"  value="$(optenv TURTLEBOT_3D_SENSOR kinect)"/>  <!-- kinect, asus_xtion_pro -->
+  <arg name="eband" default="false"/>
+  
+  <!-- Use the same world id you passed to populate_world.launch -->
+  <arg name="world_id"       default="783292cf-8a6a-4142-b62c-87de3317db19"/> <!-- maze -->
+  <arg name="is_elastic_planner" default="false"/>
+  <arg name="initial_pose_x" default="2.0"/>
+  <arg name="initial_pose_y" default="2.0"/>
+  <arg name="initial_pose_a" default="0.0"/>
+
+  <param name="/use_sim_time" value="true"/>
+
+  <include file="$(find turtlebot_stage)/launch/turtlebot_in_stage.launch">
+    <arg name="load_map" value="false"/> <!-- use world canvas instead -->
+    <arg name="initial_pose_x" value="$(arg initial_pose_x)"/>
+    <arg name="initial_pose_y" value="$(arg initial_pose_y)"/>
+    <arg name="initial_pose_a" value="$(arg initial_pose_a)"/>
+    <arg name="eband" value="$(arg eband)"/>
+  </include>
+
+  <!-- Virtual sensor -->
+  <include file="$(find turtlebot_stage)/launch/includes/virtual_sensor.launch.xml"/>
+
+
+  <!-- World canvas server -->
+  <node pkg="world_canvas_server" type="annotations_server.py" name="annotations_server">
+  </node>
+
+  <!-- Publish world elements: make world canvas server publish 2D map and virtual sensor obstacles -->
+  <node name="world_canvas_client" pkg="turtlebot_stage" type="publish_world.py">
+    <param name="world_id" value="$(arg world_id)"/>
+  </node>
+</launch>

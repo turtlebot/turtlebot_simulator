@@ -13,6 +13,7 @@
   <arg name="3d_sensor"  default="$(optenv TURTLEBOT_3D_SENSOR kinect)"/>  <!-- kinect, asus_xtion_pro -->
   
   <!-- Name of the map to use (without path nor extension) and initial position -->
+  <arg name="load_map"       default="true"/> <!-- false if someone else provides the map, e.g world canvas -->
   <arg name="map_name"       default="maze"/> <!-- robopark_plan -->
   <arg name="initial_pose_x" default="2.0"/>
   <arg name="initial_pose_y" default="2.0"/>
@@ -66,7 +67,7 @@
   <include if="$(arg eband)" file="$(find turtlebot_stage)/launch/includes/move_base_eband.launch.xml"/>
 
   <!--  ****** Maps *****  -->
-  <node name="map_server" pkg="map_server" type="map_server" args="$(find turtlebot_stage)/maps/$(arg map_name).yaml">
+  <node if="$(arg load_map)" name="map_server" pkg="map_server" type="map_server" args="$(find turtlebot_stage)/maps/$(arg map_name).yaml">
     <param name="frame_id" value="/map"/>
   </node>
 
