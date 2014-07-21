@@ -1,12 +1,14 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<?eclipse-pydev version="1.0"?><pydev_project>
+<?eclipse-pydev version="1.0"?>
+
+<pydev_project>
 <pydev_property name="org.python.pydev.PYTHON_PROJECT_INTERPRETER">Default</pydev_property>
 <pydev_property name="org.python.pydev.PYTHON_PROJECT_VERSION">python 2.6</pydev_property>
 <pydev_pathproperty name="org.python.pydev.PROJECT_EXTERNAL_SOURCE_PATH">
-<path>/opt/ros/hydro/share/mk</path>
-<path>/usr/local/lib/python2.7/dist-packages/catkinize-0.1-py2.7.egg</path>
-<path>/home/jorge/workspaces/semantic_maps/devel/lib/python2.7/dist-packages</path>
-<path>/opt/ros/hydro/lib/python2.7/dist-packages</path>
+<path>/opt/ros/indigo/share/mk</path>
+<path>/home/jorge/workspaces/world_canvas/devel/lib/python2.7/dist-packages</path>
+<path>/home/jorge/workspaces/turtlebot/devel/lib/python2.7/dist-packages</path>
+<path>/opt/ros/indigo/lib/python2.7/dist-packages</path>
 <path>/usr/lib/python2.7</path>
 <path>/usr/lib/python2.7/plat-x86_64-linux-gnu</path>
 <path>/usr/lib/python2.7/lib-tk</path>
@@ -16,7 +18,7 @@
 <path>/usr/lib/python2.7/dist-packages/PILcompat</path>
 <path>/usr/lib/python2.7/dist-packages/gtk-2.0</path>
 <path>/usr/lib/pymodules/python2.7</path>
+<path>/usr/lib/python2.7/dist-packages/ubuntu-sso-client</path>
 <path>/usr/lib/python2.7/dist-packages/wx-2.8-gtk2-unicode</path>
-<path>/home/jorge/workspaces/semantic_maps/src/world_canvas_libs/world_canvas_client_py/src/world_canvas_client</path>
 </pydev_pathproperty>
 </pydev_project>
