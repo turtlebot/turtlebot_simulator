@@ -54,14 +54,14 @@
   </node>
 
   <!-- ...using C++ client library -->
-  <node if="$(arg cpp_client_lib)" name="map_publisher" pkg="world_canvas_client_examples" type="test_world_canvas_client">
+  <node if="$(arg cpp_client_lib)" name="map_publisher" pkg="world_canvas_client_examples" type="test_annotation_collection">
     <param name="world_id" value="$(arg world_id)"/>
     <param name="topic_name" value="map"/>
     <param name="pub_as_list" value="false"/>
     <rosparam param="types">[nav_msgs/OccupancyGrid]</rosparam>
   </node>
 
-  <node if="$(arg cpp_client_lib)" name="wall_publisher" pkg="world_canvas_client_examples" type="test_world_canvas_client">
+  <node if="$(arg cpp_client_lib)" name="wall_publisher" pkg="world_canvas_client_examples" type="test_annotation_collection">
     <param name="world_id" value="$(arg world_id)"/>
     <param name="topic_name" value="wall_pose_list"/>
     <param name="topic_type" value="yocs_msgs/WallList"/>
@@ -69,7 +69,7 @@
     <rosparam param="types">[yocs_msgs/Wall]</rosparam>
   </node>
  
-  <node if="$(arg cpp_client_lib)" name="column_publisher" pkg="world_canvas_client_examples" type="test_world_canvas_client">
+  <node if="$(arg cpp_client_lib)" name="column_publisher" pkg="world_canvas_client_examples" type="test_annotation_collection">
     <param name="world_id" value="$(arg world_id)"/>
     <param name="topic_name" value="column_pose_list"/>
     <param name="topic_type" value="yocs_msgs/ColumnList"/>
