@@ -44,7 +44,7 @@
 
 
   <!-- World canvas server -->
-  <node pkg="world_canvas_server" type="annotations_server.py" name="annotations_server"/>
+  <include file="$(find world_canvas_server)/launch/annotations_server.launch"/>
 
   <!-- Publish world elements: make world canvas server publish 2D map and virtual sensor obstacles... -->
 
