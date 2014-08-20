@@ -44,7 +44,9 @@
 
 
   <!-- World canvas server -->
-  <include file="$(find world_canvas_server)/launch/annotations_server.launch"/>
+  <include file="$(find world_canvas_server)/launch/world_canvas_server.launch">
+  	<arg name="debug" value="true"/>
+  </include>
 
   <!-- Publish world elements: make world canvas server publish 2D map and virtual sensor obstacles... -->
 
