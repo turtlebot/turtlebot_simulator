@@ -8,17 +8,17 @@ import world_canvas_client
 if __name__ == '__main__':
     rospy.init_node('world_canvas_client')
 
-    world_id = rospy.get_param('~world_id')
+    world = rospy.get_param('~world')
 
     # Get the 2D map for the given world
-    map_ac = world_canvas_client.AnnotationCollection(world_id, type=['nav_msgs/OccupancyGrid'])
+    map_ac = world_canvas_client.AnnotationCollection(world, type=['nav_msgs/OccupancyGrid'])
     map_ac.loadData()
 
     # Publish the map on server side; topic type is get from the annotation info
     map_ac.publish('/map', None, True, False)   # i.e. by_server=True, as_list=False
 
     # Get all walls for the given world
-    walls_ac = world_canvas_client.AnnotationCollection(world_id, type=['yocs_msgs/Wall'])
+    walls_ac = world_canvas_client.AnnotationCollection(world, type=['yocs_msgs/Wall'])
     walls_ac.loadData()
 
     # Publish annotations' visual markers on client side
@@ -32,7 +32,7 @@ if __name__ == '__main__':
 
 
     # Get all columns for the given world and repeat the same operations
-    columns_ac = world_canvas_client.AnnotationCollection(world_id, type=['yocs_msgs/Column'])
+    columns_ac = world_canvas_client.AnnotationCollection(world, type=['yocs_msgs/Column'])
     columns_ac.loadData()
 
     # Publish annotations' visual markers on client side

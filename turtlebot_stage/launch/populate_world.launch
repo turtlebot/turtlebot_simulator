@@ -1,18 +1,18 @@
 <launch>
-  <arg name="world_id" default="783292cf-8a6a-4142-b62c-87de3317db19"/>
+  <arg name="world" default="Maze world"/>
 
   <node pkg="world_canvas_server" type="save_map.py" name="save_map">
     <!-- TODO: load map from a PNG and metadata files, as map_server does -->
-    <param name="filename" type="string" value="$(find world_canvas_server)/test/annotations/maze_map.yaml"/>
-    <param name="world_id" type="string" value="$(arg world_id)"/>
+    <param name="file"     type="string" value="$(find world_canvas_server)/test/annotations/maze_map.yaml"/>
+    <param name="world"    type="string" value="$(arg world)"/>
     <param name="map_name" type="string" value="maze"/>
   </node>
   <node pkg="world_canvas_server" type="save_walls.py" name="save_walls">
-    <param name="filename" type="string" value="$(find turtlebot_stage)/annotations/wall_list.yaml"/>
-    <param name="world_id" type="string" value="$(arg world_id)"/>
+    <param name="file"  type="string" value="$(find turtlebot_stage)/annotations/wall_list.yaml"/>
+    <param name="world" type="string" value="$(arg world)"/>
   </node>
   <node pkg="world_canvas_server" type="save_columns.py" name="save_columns">
-    <param name="filename" type="string" value="$(find turtlebot_stage)/annotations/column_list.yaml"/>
-    <param name="world_id" type="string" value="$(arg world_id)"/>
+    <param name="file"  type="string" value="$(find turtlebot_stage)/annotations/column_list.yaml"/>
+    <param name="world" type="string" value="$(arg world)"/>
   </node>
 </launch>

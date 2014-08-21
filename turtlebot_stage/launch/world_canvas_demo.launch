@@ -23,7 +23,7 @@
   <arg name="cpp_client_lib" default="true"/>
 
   <!-- Use the same world id you passed to populate_world.launch -->
-  <arg name="world_id"       default="783292cf-8a6a-4142-b62c-87de3317db19"/> <!-- maze -->
+  <arg name="world" default="Maze world"/>
   <arg name="is_elastic_planner" default="false"/>
   <arg name="initial_pose_x" default="2.0"/>
   <arg name="initial_pose_y" default="2.0"/>
@@ -52,29 +52,29 @@
 
   <!-- ...using Python client library -->
   <node if="$(arg py_client_lib)" name="world_canvas_client" pkg="turtlebot_stage" type="publish_world.py">
-    <param name="world_id" value="$(arg world_id)"/>
+    <param name="world" value="$(arg world)"/>
   </node>
 
   <!-- ...using C++ client library -->
   <node if="$(arg cpp_client_lib)" name="map_publisher" pkg="world_canvas_client_examples" type="test_annotation_collection">
-    <param name="world_id" value="$(arg world_id)"/>
-    <param name="topic_name" value="map"/>
+    <param name="world"       value="$(arg world)"/>
+    <param name="topic_name"  value="map"/>
     <param name="pub_as_list" value="false"/>
     <rosparam param="types">[nav_msgs/OccupancyGrid]</rosparam>
   </node>
 
   <node if="$(arg cpp_client_lib)" name="wall_publisher" pkg="world_canvas_client_examples" type="test_annotation_collection">
-    <param name="world_id" value="$(arg world_id)"/>
-    <param name="topic_name" value="wall_pose_list"/>
-    <param name="topic_type" value="yocs_msgs/WallList"/>
+    <param name="world"       value="$(arg world)"/>
+    <param name="topic_name"  value="wall_pose_list"/>
+    <param name="topic_type"  value="yocs_msgs/WallList"/>
     <param name="pub_as_list" value="true"/>
     <rosparam param="types">[yocs_msgs/Wall]</rosparam>
   </node>
  
   <node if="$(arg cpp_client_lib)" name="column_publisher" pkg="world_canvas_client_examples" type="test_annotation_collection">
-    <param name="world_id" value="$(arg world_id)"/>
-    <param name="topic_name" value="column_pose_list"/>
-    <param name="topic_type" value="yocs_msgs/ColumnList"/>
+    <param name="world"       value="$(arg world)"/>
+    <param name="topic_name"  value="column_pose_list"/>
+    <param name="topic_type"  value="yocs_msgs/ColumnList"/>
     <param name="pub_as_list" value="true"/>
     <rosparam param="types">[yocs_msgs/Column]</rosparam>
   </node>
