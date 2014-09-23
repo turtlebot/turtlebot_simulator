@@ -11,10 +11,9 @@
   <arg name="base"       default="$(optenv TURTLEBOT_BASE kobuki)"/>  <!-- create, rhoomba -->
   <arg name="stacks"     default="$(optenv TURTLEBOT_STACKS hexagons)"/>  <!-- circles, hexagons -->
   <arg name="3d_sensor"  default="$(optenv TURTLEBOT_3D_SENSOR kinect)"/>  <!-- kinect, asus_xtion_pro -->
-
+  
   <!-- Name of the map to use (without path nor extension) and initial position -->
-  <arg name="map_file"       default=" $(env TURTLEBOT_STAGE_MAP_FILE)"/> <!-- robopark_plan -->
-  <arg name="world_file"     default=" $(env TURTLEBOT_STAGE_WORLD_FILE)"/>
+  <arg name="map_name"       default="maze"/> <!-- robopark_plan -->
   <arg name="initial_pose_x" default="2.0"/>
   <arg name="initial_pose_y" default="2.0"/>
   <arg name="initial_pose_a" default="0.0"/>
@@ -35,7 +34,7 @@
         Args:
           -g : run in headless mode.
   --> 
-  <node pkg="stage_ros" type="stageros" name="stageros" args="$(arg world_file)">
+  <node pkg="stage_ros" type="stageros" name="stageros" args="$(find turtlebot_stage)/maps/stage/$(arg map_name).world">
     <param name="base_watchdog_timeout" value="0.5"/>
     <remap from="odom" to="odom"/>
     <remap from="base_pose_ground_truth" to="base_pose_ground_truth"/>
@@ -64,7 +63,7 @@
   <include file="$(find turtlebot_navigation)/launch/includes/move_base.launch.xml"/>
 
   <!--  ****** Maps *****  -->
-  <node name="map_server" pkg="map_server" type="map_server" args="$(arg map_file)">
+  <node name="map_server" pkg="map_server" type="map_server" args="$(find turtlebot_stage)/maps/$(arg map_name).yaml">
     <param name="frame_id" value="/map"/>
   </node>
 
