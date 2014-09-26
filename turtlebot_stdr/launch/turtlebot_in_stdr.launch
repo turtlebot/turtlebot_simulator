@@ -24,27 +24,12 @@
 
   <!--param name="/use_sim_time" value="true"/-->
   <!--  ******************** Stdr********************  -->
-  <!-- 
-        Publishes transforms:
-          /base_link -> /base_laser
-          /base_footprint -> /base_link (identity)
-          /odom -> base_footprint
-        Publishes topics:
-          /odom : odometry data from the simulated odometry
-          /base_scan : laser data from the simulated laser
-          /base_pose_ground_truth : the ground truth pose
-        Parameters:
-          base_watchdog_timeout : time (s) after receiving the last command on cmd_vel before stopping the robot
-        Args:
-          -g : run in headless mode.
-  --> 
-
   <include file="$(find stdr_robot)/launch/robot_manager.launch" />
-    <!-- Run STDR server with a prefedined map-->
+  <!-- Run STDR server with a prefedined map-->
   <node pkg="stdr_server" type="stdr_server_node" name="stdr_server" output="screen" args="$(find turtlebot_stdr)/maps/$(arg map_name).yaml"/>
-    <!--Spawn new robot at init position 2 2 0-->
+  <!--Spawn new robot at init position 2 2 0-->
   <node pkg="stdr_robot" type="robot_handler" name="$(anon robot_spawn)" args="add $(find turtlebot_stdr)/robot/turtlebot.yaml $(arg initial_pose_x) $(arg initial_pose_y) 0"/>
-    <!-- Run Gui  -->
+  <!-- Run Gui  -->
   <include file="$(find stdr_gui)/launch/stdr_gui.launch"/>
   <!-- Run the relay to remap topics -->
   <include file="$(find turtlebot_stdr)/launch/includes/relays.launch.xml"/>
@@ -67,12 +52,15 @@
   </node>
 
   <!--  ************** Navigation  ***************  -->
-  <include file="$(find turtlebot_stdr)/launch/includes/move_base_stdr.launch.xml">
-      <arg name="odom_topic" value="$(arg odom_topic)"/>
+  <include file="$(find turtlebot_navigation)/launch/includes/move_base.launch.xml">
+   <arg name="odom_topic" value="$(arg odom_topic)"/>
+   <arg name="odom_frame_id"   value="$(arg odom_frame_id)"/>
+   <arg name="base_frame_id"   value="$(arg base_frame_id)"/>
+   <arg name="global_frame_id" value="$(arg global_frame_id)"/>
   </include>
 
-  <!--  ****** AMCL *****  -->
-  <include file="$(find turtlebot_stdr)/launch/includes/amcl_stdr.launch.xml">
+  <!--  ************** AMCL ************** -->
+  <include file="$(find turtlebot_navigation)/launch/includes/amcl.launch.xml">
     <arg name="scan_topic" value="$(arg laser_topic)"/>
     <arg name="use_map_topic" value="true"/>
     <arg name="odom_frame_id" value="$(arg odom_frame_id)"/>
@@ -85,6 +73,7 @@
 
  <!-- ********** Small tf tree connector between robot0 and base_footprint********* -->
   <node name="tf_connector" pkg="turtlebot_stdr" type="tf_connector.py"/>
+  
   <!--  **************** Visualisation ****************  -->
   <node name="rviz" pkg="rviz" type="rviz" args="-d $(find turtlebot_stdr)/rviz/robot_navigation.rviz"/>
   
