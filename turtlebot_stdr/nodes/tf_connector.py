@@ -2,7 +2,6 @@
 __author__ = 'mehdi tlili'
 import rospy
 from tf2_msgs.msg import TFMessage
-from nav_msgs.msg import OccupancyGrid
 import tf
 
 class Remapper(object):
