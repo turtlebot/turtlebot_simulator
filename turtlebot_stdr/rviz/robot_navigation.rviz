@@ -363,7 +363,7 @@ Visualization Manager:
       Draw Behind: false
       Enabled: true
       Name: Map
-      Topic: /new_map
+      Topic: /rviz_map
       Value: true
     - Class: rviz/Group
       Displays:
