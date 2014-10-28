@@ -15,7 +15,9 @@
   <url type="bugtracker">https://github.com/turtlebot/turtlebot_simulator/issues</url>
 
   <buildtool_depend>catkin</buildtool_depend>
-  <run_depend>stdr</run_depend>
+  <run_depend>stdr_gui</run_depend>
+  <run_depend>stdr_robot</run_depend>
+  <run_depend>stdr_server</run_depend>
   <run_depend>navigation</run_depend>
   <run_depend>turtlebot_bringup</run_depend>
   <run_depend>yocs_virtual_sensor</run_depend>
