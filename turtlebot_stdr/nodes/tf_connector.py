@@ -8,7 +8,6 @@ class Remapper(object):
 
     def __init__(self):
         self.br = tf.TransformBroadcaster()
-        self.map_pub = rospy.Publisher("new_map", OccupancyGrid, queue_size=10)
         rospy.Subscriber("/tf", TFMessage, self.tf_remapper)
 
     def tf_remapper(self, msg):

@@ -1,9 +1,7 @@
 <!-- 
   Turtlebot navigation simulation:
   - stdr
-  - map_server
   - move_base
-  - static map
   - amcl
   - rviz view
  -->
@@ -50,12 +48,6 @@
   <node pkg="nodelet" type="nodelet" name="cmd_vel_mux" args="load yocs_cmd_vel_mux/CmdVelMuxNodelet mobile_base_nodelet_manager">
     <param name="yaml_cfg_file" value="$(find turtlebot_bringup)/param/mux.yaml"/>
     <remap from="cmd_vel_mux/output" to="mobile_base/commands/velocity"/>
-  </node>
-
-  <!--  ****** Maps *****  -->
-  <node name="map_server" pkg="map_server" type="map_server" args="$(arg map_file)">
-    <param name="frame_id" value="$(arg global_frame_id)"/>
-    <remap from="map" to="rviz_map"/>
   </node>
 
   <!--  ************** Navigation  ***************  -->
