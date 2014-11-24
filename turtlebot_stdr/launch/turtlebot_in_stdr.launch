@@ -3,6 +3,7 @@
   - stdr
   - move_base
   - amcl
+  - map_server
   - rviz view
  -->
 <launch>
@@ -49,6 +50,12 @@
     <param name="yaml_cfg_file" value="$(find turtlebot_bringup)/param/mux.yaml"/>
     <remap from="cmd_vel_mux/output" to="mobile_base/commands/velocity"/>
   </node>
+
+  <!-- ****** Maps ***** --> 	
+  <node name="map_server" pkg="map_server" type="map_server" args="$(arg map_file)"> 	
+   <param name="frame_id" value="$(arg global_frame_id)"/> 	
+  </node> 	
+
 
   <!--  ************** Navigation  ***************  -->
   <include file="$(find turtlebot_navigation)/launch/includes/move_base.launch.xml">
