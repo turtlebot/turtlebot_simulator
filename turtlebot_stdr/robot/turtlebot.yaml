@@ -8,7 +8,7 @@ robot:
     - initial_pose:
         x: 2.0
         y: 2.0
-        theta: 0
+        theta: 0.0
     - laser:
         laser_specifications:
           max_angle: 0.5
