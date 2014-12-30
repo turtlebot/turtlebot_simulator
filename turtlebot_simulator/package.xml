@@ -12,6 +12,7 @@
   <buildtool_depend>catkin</buildtool_depend>
   <run_depend>turtlebot_gazebo</run_depend>
   <run_depend>turtlebot_stage</run_depend>
+  <run_depend>turtlebot_stdr</run_depend>
 
   <export>
     <metapackage/>
