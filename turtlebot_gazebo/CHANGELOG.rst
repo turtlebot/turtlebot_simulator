@@ -2,8 +2,8 @@
 Changelog for package turtlebot_simulator
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+2.2.0 (2014-12-30)
+------------------
 * use env hook to configure gazebo world and map fixes `#40 <https://github.com/turtlebot/turtlebot_simulator/issues/40>`_
 * now it uses args to load world. and corridor world is added. `#39 <https://github.com/turtlebot/turtlebot_simulator/issues/39>`_
 * disable create gazebo plugin

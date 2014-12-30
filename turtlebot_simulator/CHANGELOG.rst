@@ -2,8 +2,8 @@
 Changelog for package turtlebot_simulator
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+2.2.0 (2014-12-30)
+------------------
 * add turtlebot_stdr in meta package fixes `#44 <https://github.com/turtlebot/turtlebot_simulator/issues/44>`_
 * add turtlebot_stage
 * Contributors: Jihoon Lee

@@ -2,8 +2,8 @@
 Changelog for package turtlebot_stdr
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+2.2.0 (2014-12-30)
+------------------
 * add installrule for tf_connector and robot directory
 * Use default map topic name map after changing stdr's internal map server's topic
 * Use only one map topic and remove unused sensors from rviz

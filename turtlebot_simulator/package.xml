@@ -1,6 +1,6 @@
 <package>
   <name>turtlebot_simulator</name>
-  <version>2.1.1</version>
+  <version>2.2.0</version>
   <description>Catkin metapackage for the turtlebot_simulator stack</description>
   <maintainer email="turtlebot@osrfoundation.com">OSRF</maintainer>
   <license>BSD</license>

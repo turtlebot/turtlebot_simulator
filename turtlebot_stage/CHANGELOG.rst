@@ -2,8 +2,8 @@
 Changelog for package turtlebot_stage
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+2.2.0 (2014-12-30)
+------------------
 * Adds border extension to map to fix map scaling / position in stage
 * Added changes in the stage launch file undone before because of the merge
 * Merged
