@@ -2,6 +2,15 @@
 Changelog for package turtlebot_simulator
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* use env hook to configure gazebo world and map fixes `#40 <https://github.com/turtlebot/turtlebot_simulator/issues/40>`_
+* now it uses args to load world. and corridor world is added. `#39 <https://github.com/turtlebot/turtlebot_simulator/issues/39>`_
+* disable create gazebo plugin
+* Add turtlebot_navigation to turtlebot_gazebo depends
+  gmapping_demo.launch depends on it.
+* Contributors: Jihoon Lee, Jochen Sprickerhof
+
 2.1.1 (2013-10-14)
 ------------------
 * Rename cmd_vel_mux as yocs_cmd_vel_mux.
