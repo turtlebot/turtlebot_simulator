@@ -34,4 +34,21 @@
     <remap from="image" to="/camera/depth/image_raw"/>
     <remap from="scan" to="/scan"/>
   </node>
+
+  <!-- App Manager -->
+   <param name="/use_sim_time" value="true" />
+ 
+   <arg name="robot_name" default="gamza"/>
+   <arg name="robot_type" default="turtlebot"/>
+   <arg name="robot_rapp_whitelist" default="[rocon_apps, turtlebot_rapps]"/>
+ 
+   <include file="$(find rocon_app_manager)/launch/standalone.launch">
+     <arg name="robot_name" value="$(arg robot_name)"/>
+     <arg name="robot_type" value="$(arg robot_type)"/>
+     <arg name="rapp_package_whitelist" value="$(arg robot_rapp_whitelist)" />
+     <arg name="rapp_package_blacklist" value="[]" />
+     <arg name="screen" value="true" />
+     <arg name="simulation"    value="true" />
+   </include>
+
 </launch>
