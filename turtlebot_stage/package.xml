@@ -18,6 +18,7 @@
   <run_depend>stage_ros</run_depend>
   <run_depend>navigation</run_depend>
   <run_depend>turtlebot_bringup</run_depend>
+  <run_depend>turtlebot_navigation</run_depend>
   <run_depend>yocs_virtual_sensor</run_depend>
   <run_depend>yocs_velocity_smoother</run_depend>
 </package>
