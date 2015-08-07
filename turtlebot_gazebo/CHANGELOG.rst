@@ -2,6 +2,11 @@
 Changelog for package turtlebot_simulator
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Enable to run Gazebo w/o GUI.
+* Contributors: Isaac IY Saito
+
 2.2.0 (2014-12-30)
 ------------------
 * use env hook to configure gazebo world and map fixes `#40 <https://github.com/turtlebot/turtlebot_simulator/issues/40>`_

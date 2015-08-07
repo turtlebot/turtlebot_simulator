@@ -2,6 +2,11 @@
 Changelog for package turtlebot_stage
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* turtlebot_stage: add turtlebot_navigation dependency
+* Contributors: Gaël Ecorchard
+
 2.2.0 (2014-12-30)
 ------------------
 * Adds border extension to map to fix map scaling / position in stage

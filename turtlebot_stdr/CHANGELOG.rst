@@ -2,6 +2,9 @@
 Changelog for package turtlebot_stdr
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+
 2.2.0 (2014-12-30)
 ------------------
 * add installrule for tf_connector and robot directory
