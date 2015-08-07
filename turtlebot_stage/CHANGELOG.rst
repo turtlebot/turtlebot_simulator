@@ -2,8 +2,8 @@
 Changelog for package turtlebot_stage
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+2.2.1 (2015-08-07)
+------------------
 * turtlebot_stage: add turtlebot_navigation dependency
 * Contributors: Gaël Ecorchard
 
