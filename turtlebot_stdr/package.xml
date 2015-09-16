@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <package>
   <name>turtlebot_stdr</name>
-  <version>2.2.1</version>
+  <version>2.2.2</version>
   <description>
     Stdr version of turtlebot simulation. Convenient to test 2D-navigation related stuffs
   </description>

@@ -2,8 +2,8 @@
 Changelog for package turtlebot_stage
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+2.2.2 (2015-09-16)
+------------------
 * view frame is now base_link closes `#51 <https://github.com/turtlebot/turtlebot_simulator/issues/51>`_
 * Contributors: Jihoon Lee
 
