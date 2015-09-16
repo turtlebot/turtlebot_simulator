@@ -2,6 +2,9 @@
 Changelog for package turtlebot_simulator
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+
 2.2.1 (2015-08-07)
 ------------------
 * Enable to run Gazebo w/o GUI.
