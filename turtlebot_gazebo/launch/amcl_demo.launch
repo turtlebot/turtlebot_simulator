@@ -1,4 +1,4 @@
-launch>
+<launch>
   <!-- Map server -->
   <arg name="map_file" default="$(env TURTLEBOT_GAZEBO_MAP_FILE)"/>
   <arg name="3d_sensor" default="$(env TURTLEBOT_3D_SENSOR)"/>  <!-- r200, kinect, asus_xtion_pro -->
