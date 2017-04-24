@@ -1,4 +1,4 @@
-<!-- 
+<!--
   Turtlebot navigation simulation:
   - stdr
   - move_base
@@ -12,9 +12,9 @@
   <arg name="3d_sensor"  default="$(optenv TURTLEBOT_3D_SENSOR kinect)"/>  <!-- kinect, asus_xtion_pro -->
   <arg name="laser_topic" default="robot0/laser_0"/> <!-- default laser topic in stdr for 1 robot -->
   <arg name="odom_topic" default="robot0/odom"/>
-  <arg name="odom_frame_id" default="map"/> 
-  <arg name="base_frame_id" default="robot0"/>  
-  <arg name="global_frame_id" default="world"/> 
+  <arg name="odom_frame_id" default="map"/>
+  <arg name="base_frame_id" default="robot0"/>
+  <arg name="global_frame_id" default="world"/>
   <!-- Name of the map to use (without path nor extension) and initial position -->
   <arg name="map_file"       default="$(env TURTLEBOT_STDR_MAP_FILE)"/>
   <arg name="initial_pose_x" default="2.0"/>
@@ -33,7 +33,7 @@
   <include file="$(find stdr_gui)/launch/stdr_gui.launch"/>
   <!-- Run the relay to remap topics -->
   <include file="$(find turtlebot_stdr)/launch/includes/relays.launch.xml"/>
-  
+
   <!--  ***************** Robot Model *****************  -->
   <include file="$(find turtlebot_bringup)/launch/includes/robot.launch.xml">
     <arg name="base" value="$(arg base)" />
@@ -51,10 +51,10 @@
     <remap from="cmd_vel_mux/output" to="mobile_base/commands/velocity"/>
   </node>
 
-  <!-- ****** Maps ***** --> 	
-  <node name="map_server" pkg="map_server" type="map_server" args="$(arg map_file)"> 	
-   <param name="frame_id" value="$(arg global_frame_id)"/> 	
-  </node> 	
+  <!-- ****** Maps ***** -->
+  <node name="map_server" pkg="map_server" type="map_server" args="$(arg map_file)">
+   <param name="frame_id" value="$(arg global_frame_id)"/>
+  </node>
 
 
   <!--  ************** Navigation  ***************  -->
@@ -73,7 +73,7 @@
     <param name="move_base/global_costmap/obstacle_layer/scan/max_obstacle_height" value="$(arg max_obstacle_height)"/>
 
   <!--  ************** AMCL ************** -->
-  <include file="$(find turtlebot_navigation)/launch/includes/amcl.launch.xml">
+  <include file="$(find turtlebot_navigation)/launch/includes/amcl/amcl.launch.xml">
     <arg name="scan_topic" value="$(arg laser_topic)"/>
     <arg name="use_map_topic" value="true"/>
     <arg name="odom_frame_id" value="$(arg odom_frame_id)"/>
@@ -86,11 +86,11 @@
 
  <!-- ********** Small tf tree connector between robot0 and base_footprint********* -->
   <node name="tf_connector" pkg="turtlebot_stdr" type="tf_connector.py" output="screen"/>
-  
+
   <!--  **************** Visualisation ****************  -->
   <node name="rviz" pkg="rviz" type="rviz" args="-d $(find turtlebot_stdr)/rviz/robot_navigation.rviz"/>
 
 
 
-  
+
 </launch>
