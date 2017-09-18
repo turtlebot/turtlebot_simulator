@@ -2,8 +2,8 @@
 Changelog for package turtlebot_stage
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+2.2.3 (2017-09-18)
+------------------
   Fixed include path for turtlebot_navigation/launch/includes/amcl/amcl.launch.xml. https://github.com/turtlebot/turtlebot_apps/commit/cc2671666e8529677e6757fe78de4ff625f946e5
 * Contributors: Clyde McQueen
 
