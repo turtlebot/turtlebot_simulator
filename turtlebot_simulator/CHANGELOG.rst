@@ -2,6 +2,9 @@
 Changelog for package turtlebot_simulator
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+
 2.2.2 (2015-09-16)
 ------------------
 

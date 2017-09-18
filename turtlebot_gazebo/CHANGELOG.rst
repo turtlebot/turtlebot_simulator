@@ -2,6 +2,11 @@
 Changelog for package turtlebot_simulator
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Fix changing amcl.launch.xml and gmapping.launch.xml locations under turtlebot_navigation
+* Contributors: Mohamed Al Zaiady, Mohamed Elzaiady, Tully Foote, mzaiady
+
 2.2.2 (2015-09-16)
 ------------------
 

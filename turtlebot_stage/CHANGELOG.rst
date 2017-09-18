@@ -2,6 +2,11 @@
 Changelog for package turtlebot_stage
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+  Fixed include path for turtlebot_navigation/launch/includes/amcl/amcl.launch.xml. https://github.com/turtlebot/turtlebot_apps/commit/cc2671666e8529677e6757fe78de4ff625f946e5
+* Contributors: Clyde McQueen
+
 2.2.2 (2015-09-16)
 ------------------
 * view frame is now base_link closes `#51 <https://github.com/turtlebot/turtlebot_simulator/issues/51>`_

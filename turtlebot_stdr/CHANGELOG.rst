@@ -2,6 +2,11 @@
 Changelog for package turtlebot_stdr
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* add turtlebot_navigation as dependency and fix amcl.launch.xml include path in turtlebot_stdr
+* Contributors: Gérald Lelong
+
 2.2.2 (2015-09-16)
 ------------------
 
